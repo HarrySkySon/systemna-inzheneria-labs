@@ -1,0 +1,118 @@
+@startuml UseCaseDiagram
+
+title Діаграма варіантів використання\nSafeHeight Monitor - Система моніторингу будівельних майданчиків
+
+left to right direction
+
+' Стилізація
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam usecase {
+    BackgroundColor LightYellow
+    BorderColor DarkOrange
+    ArrowColor DarkOrange
+}
+
+' Актори (зліва)
+actor "Працівник\nбудівельного\nмайданчику" as Worker
+actor "Інженер з\nохорони праці" as SafetyEng
+actor "Бригадир" as Foreman
+actor "Системний\nадміністратор" as Admin
+actor "Менеджер\nпроекту" as PM
+
+' Зовнішні системи (справа)
+actor "Azure IoT Hub" as IoTHub
+actor "AI система" as AI
+actor "Аварійна\nслужба" as Emergency
+
+' Система
+rectangle "SafeHeight Monitor System" {
+
+    ' Use Cases для Працівника
+    usecase "UC-01:\nРеєстрація в системі\nна початку зміни" as UC01
+    usecase "UC-02:\nОтримання\nпопередження\nпро небезпеку" as UC02
+
+    ' Use Cases для Інженера з охорони праці
+    usecase "UC-03:\nПерегляд поточного\nстатусу всіх\nпрацівників" as UC03
+    usecase "UC-04:\nНалаштування правил\nвиявлення ризиків" as UC04
+    usecase "UC-05:\nРеагування на\nкритичне\nпопередження" as UC05
+
+    ' Use Cases для Бригадира
+    usecase "UC-06:\nПерегляд\nмісцезнаходження\nкоманди" as UC06
+    usecase "UC-07:\nПризначення\nробочих зон" as UC07
+
+    ' Use Cases для Системного адміністратора
+    usecase "UC-08:\nНалаштування\nIoT пристроїв" as UC08
+    usecase "UC-09:\nКерування\nкористувачами\nсистеми" as UC09
+
+    ' Use Cases для Менеджера проекту
+    usecase "UC-10:\nПерегляд звітів\nз безпеки" as UC10
+    usecase "UC-11:\nАналіз трендів\nаварійності" as UC11
+
+    ' Загальні use cases (include)
+    usecase "Автентифікація" as Auth
+    usecase "Відправка\nсповіщення" as Notify
+    usecase "Логування\nподії" as Log
+    usecase "Аналіз AI" as AIAnalysis
+}
+
+' Зв'язки Працівника
+Worker --> UC01
+Worker --> UC02
+
+' Зв'язки Інженера з охорони праці
+SafetyEng --> UC03
+SafetyEng --> UC04
+SafetyEng --> UC05
+
+' Зв'язки Бригадира
+Foreman --> UC06
+Foreman --> UC07
+
+' Зв'язки Адміністратора
+Admin --> UC08
+Admin --> UC09
+
+' Зв'язки Менеджера
+PM --> UC10
+PM --> UC11
+
+' Include відношення
+UC01 .> Auth : <<include>>
+UC03 .> Auth : <<include>>
+UC04 .> Auth : <<include>>
+UC05 .> Auth : <<include>>
+UC06 .> Auth : <<include>>
+UC07 .> Auth : <<include>>
+UC08 .> Auth : <<include>>
+UC09 .> Auth : <<include>>
+UC10 .> Auth : <<include>>
+UC11 .> Auth : <<include>>
+
+UC02 .> Notify : <<include>>
+UC05 .> Notify : <<include>>
+UC07 .> Notify : <<include>>
+
+UC01 .> Log : <<include>>
+UC02 .> Log : <<include>>
+UC05 .> Log : <<include>>
+UC09 .> Log : <<include>>
+
+UC02 .> AIAnalysis : <<include>>
+UC04 .> AIAnalysis : <<include>>
+UC11 .> AIAnalysis : <<include>>
+
+' Extend відношення
+UC05 ..> UC03 : <<extend>>\n(критична\nситуація)
+
+' Взаємодія з зовнішніми системами
+UC01 --> IoTHub : використовує
+UC02 --> IoTHub : використовує
+UC08 --> IoTHub : конфігурує
+
+AIAnalysis --> AI : використовує
+UC04 --> AI : налаштовує
+
+UC05 --> Emergency : викликає\n(критична\nситуація)
+
+@enduml
