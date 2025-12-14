@@ -1,0 +1,72 @@
+@startuml BusinessGoalDiagram
+
+title Діаграма бізнес-цілей, проблем та критеріїв успіху\nВеб-додаток моніторингу будівельних майданчиків
+
+' Визначення кольорів
+skinparam rectangle {
+    BackgroundColor<<problem>> LightCoral
+    BackgroundColor<<goal>> LightGreen
+    BackgroundColor<<solution>> LightBlue
+    BackgroundColor<<criterion>> LightYellow
+    BorderColor Black
+}
+
+' Бізнес проблема
+rectangle "**Бізнес проблема:**\nВисока аварійність на будівельних\nмайданчиках через падіння працівників\nз висоти (>40% всіх нещасних випадків)" as Problem <<problem>>
+
+' Головна бізнес ціль
+rectangle "**Головна бізнес ціль:**\nЗменшити кількість нещасних випадків\nна будівельних майданчиках на 60%\nпротягом 12 місяців" as MainGoal <<goal>>
+
+' Фінансові цілі
+rectangle "**Бізнес ціль 1 (Фінансова):**\nЗменшити витрати на компенсації\nта штрафи з $500,000 до $150,000/рік" as Goal1 <<goal>>
+
+rectangle "**Бізнес ціль 2 (Фінансова):**\nДосягти ROI 200% протягом\n18 місяців від запуску" as Goal2 <<goal>>
+
+rectangle "**Бізнес ціль 3 (Фінансова):**\nЗаощадити $200,000/рік на страхуванні\nзавдяки покращенню показників безпеки" as Goal3 <<goal>>
+
+' Нефінансові цілі
+rectangle "**Бізнес ціль 4 (Нефінансова):**\nДосягти рівня задоволеності\nпрацівників 85% протягом 6 місяців" as Goal4 <<goal>>
+
+rectangle "**Бізнес ціль 5 (Нефінансова):**\nОтримати сертифікацію безпеки\nISO 45001 протягом 12 місяців" as Goal5 <<goal>>
+
+rectangle "**Бізнес ціль 6 (Нефінансова):**\nПокращити репутацію компанії\nяк лідера з безпеки праці" as Goal6 <<goal>>
+
+' Рішення
+rectangle "**Рішення 1:**\nВпровадити IoT датчики\nдля моніторингу положення працівників" as Solution1 <<solution>>
+
+rectangle "**Рішення 2:**\nРозробити AI/ML модель\nдля прогнозування ризиків падіння" as Solution2 <<solution>>
+
+rectangle "**Рішення 3:**\nСтворити систему сповіщень\nу реальному часі" as Solution3 <<solution>>
+
+' Критерії успіху
+rectangle "**Критерій успіху 1:**\nТочність виявлення ризиків ≥ 95%" as Criterion1 <<criterion>>
+
+rectangle "**Критерій успіху 2:**\nЧас реакції на загрозу < 2 секунди" as Criterion2 <<criterion>>
+
+rectangle "**Критерій успіху 3:**\nПокриття моніторингу ≥ 98%\nробочих зон" as Criterion3 <<criterion>>
+
+rectangle "**Критерій успіху 4:**\nДоступність системи (uptime) ≥ 99.5%" as Criterion4 <<criterion>>
+
+' Зв'язки
+Problem -down-> MainGoal
+
+MainGoal -down-> Goal1
+MainGoal -down-> Goal2
+MainGoal -down-> Goal3
+MainGoal -down-> Goal4
+MainGoal -down-> Goal5
+MainGoal -down-> Goal6
+
+Goal1 -down-> Solution1
+Goal2 -down-> Solution2
+Goal3 -down-> Solution3
+Goal4 -down-> Solution1
+Goal5 -down-> Solution2
+Goal6 -down-> Solution3
+
+Solution1 -down-> Criterion1
+Solution2 -down-> Criterion2
+Solution3 -down-> Criterion3
+Solution1 -down-> Criterion4
+
+@enduml
