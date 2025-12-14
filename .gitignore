@@ -43,3 +43,10 @@ wheels/
 # OS files
 Thumbs.db
 .DS_Store
+
+# Setup instructions (not part of lab work)
+GITHUB_SETUP.md
+
+# Old/unused diagram generation scripts
+generate_diagram.py
+generate_diagram_v2.py
