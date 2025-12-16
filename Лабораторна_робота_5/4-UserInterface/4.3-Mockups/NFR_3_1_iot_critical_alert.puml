@@ -1,0 +1,215 @@
+@startuml NFR_3_1_IoT_Critical_Alert_Mockup
+' NFR3.1: Система повинна генерувати попередження за <3 секунди після виявлення ризику
+' NFR3.2: Попередження повинні відображатися на IoT пристрої працівника
+' NFR3.3: IoT пристрій повинен вібрувати та відтворювати звуковий сигнал
+' NFR7.1: IoT пристрій повинен працювати без підзарядки мінімум 12 годин
+' NFR7.2: IoT пристрій повинен мати водонепроникний корпус (IP67)
+
+skinparam backgroundColor #FAFAFA
+
+salt
+{+
+  {^"<back:#37474F>Mobile Status Bar</back>"
+    {
+      <back:#37474F><color:white><size:14><b>10:45</b></size></color></back> |
+      <back:#37474F><color:#4CAF50>📶 <b>●●●●</b></color></back> |
+      <back:#37474F><color:#2196F3>Bluetooth</color></back> |
+      <back:#37474F><color:#FFEB3B>🔋 <b>85%</b></color></back>
+    }
+  }
+  ====
+  .
+  .
+  <back:#D32F2F><color:white><size:24><b>⚠ КРИТИЧНО!</b></size></color></back>
+  .
+  .
+  ====
+  {+
+    <back:#FFEBEE>
+    .
+    <back:#FFEBEE><color:#C62828><size:18><b>ВИЯВЛЕНО РИЗИК ПАДІННЯ</b></size></color></back>
+    <back:#FFEBEE><color:#C62828><size:18><b>З ВИСОТИ</b></size></color></back>
+    .
+    <back:#FFEBEE><size:13>Ймовірність інциденту:</size></back>
+    <back:#FFEBEE><color:#D32F2F><size:22><b>95%</b></size></color></back>
+    .
+    <back:#FFEBEE><size:11><color:#78909C>Виявлено: <b>10:45:32</b> | Затримка: <color:#2E7D32><b>1.2 сек</b></color></color></size></back>
+    .
+  }
+  ====
+  {^"<back:#FFFFFF>Виявлені загрози</back>"
+    {+
+      <back:#FFEBEE>
+      .
+      <back:#FFEBEE><color:#D32F2F><size:14><b>🔴 Небезпечна висота</b></size></color></back>
+      <back:#FFEBEE><size:13>Висота над рівнем землі: <b>12.5 м</b></size></back>
+      <back:#FFEBEE><size:11><color:#78909C>Критичний поріг: >10 м</color></size></back>
+      .
+      ----
+      .
+      <back:#FFEBEE><color:#D32F2F><size:14><b>🔴 Нестабільне положення тіла</b></size></color></back>
+      <back:#FFEBEE><size:13>Нахил від вертикалі: <b>45°</b></size></back>
+      <back:#FFEBEE><size:11><color:#78909C>Допустимий нахил: <30°</color></size></back>
+      .
+      ----
+      .
+      <back:#FFEBEE><color:#D32F2F><size:14><b>🔴 Близькість до небезпечного краю</b></size></color></back>
+      <back:#FFEBEE><size:13>Відстань до краю: <b>0.5 м</b></size></back>
+      <back:#FFEBEE><size:11><color:#78909C>Безпечна зона: >2 м</color></size></back>
+      .
+      ----
+      .
+      <back:#FFF3E0><color:#F57C00><size:14><b>🟠 Відсутність страхувального троса</b></size></color></back>
+      <back:#FFF3E0><size:13>Статус: <color:#D32F2F><b>Не підключено</b></color></size></back>
+      <back:#FFF3E0><size:11><color:#78909C>Рекомендація: Негайно підключити</color></size></back>
+      .
+    }
+  }
+  ====
+  {^"<back:#E3F2FD>Рекомендації з безпеки</back>"
+    {+
+      <back:#E3F2FD>
+      .
+      <back:#E3F2FD><color:#1976D2><size:13><b>НЕГАЙНІ ДІЇ:</b></size></color></back>
+      .
+      <back:#E3F2FD><size:12><b>1.</b> 🛑 <b>ЗУПИНІТЬСЯ НЕГАЙНО</b> - не рухайтесь</size></back>
+      .
+      <back:#E3F2FD><size:12><b>2.</b> ⬅️ <b>ВІДІЙДІТЬ ВІД КРАЮ</b> мінімум на 2 м</size></back>
+      .
+      <back:#E3F2FD><size:12><b>3.</b> 🔗 <b>ПІДКЛЮЧІТЬ ТРОС</b> до анкерної точки</size></back>
+      .
+      <back:#E3F2FD><size:12><b>4.</b> ✋ <b>ПЕРЕВІРТЕ СТІЙКІСТЬ</b> поверхні</size></back>
+      .
+      <back:#E3F2FD><size:12><b>5.</b> 📞 <b>ПОВІДОМТЕ БРИГАДИРА</b> про ситуацію</size></back>
+      .
+    }
+  }
+  ====
+  {^"<back:#FFFFFF>Біометричні дані</back>"
+    {
+      <back:#FFFFFF>
+      .
+      <back:#FFF3E0><color:#F57C00>💓 <b>Пульс:</b> <size:15><b>125 уд/хв</b></size> (підвищений)</color></back> |
+      <back:#E8F5E9><color:#2E7D32>🌡️ <b>Температура:</b> <size:13>36.8°C</size> (норма)</color></back>
+      .
+      <back:#E3F2FD><color:#1976D2>📍 <b>Локація:</b> Зона A, 3 поверх, Сектор 12</color></back>
+      .
+    }
+  }
+  ====
+  {+
+    <back:#FFFFFF>
+    .
+    .
+    [ <back:#2E7D32><color:white><size:18><b>  ✓ Я В БЕЗПЕЦІ  </b></size></color></back> ]
+    .
+    <back:#FFFFFF><color:#78909C><size:10>Підтвердити отримання попередження</size></color></back>
+    .
+    .
+    ----
+    .
+    .
+    [ <back:#D32F2F><color:white><size:18><b>  ! ПОТРІБНА ДОПОМОГА!  </b></size></color></back> ]
+    .
+    <back:#FFFFFF><color:#78909C><size:10>Активувати аварійний протокол та виклик допомоги</size></color></back>
+    .
+    .
+  }
+  ====
+  {^"<back:#E8F5E9>Автоматичні сповіщення</back>"
+    {+
+      <back:#E8F5E9>
+      .
+      <back:#E8F5E9><color:#2E7D32><size:12><b>Відправлені сповіщення:</b></size></color></back>
+      .
+      <back:#E8F5E9><color:#2E7D32><size:11>✓ Інженер з охорони праці (10:45:33)</size></color></back>
+      <back:#E8F5E9><color:#2E7D32><size:11>✓ Бригадир Петренко М.С. (10:45:33)</size></color></back>
+      <back:#E8F5E9><color:#2E7D32><size:11>✓ Центральна диспетчерська (10:45:34)</size></color></back>
+      .
+    }
+  }
+  ====
+  {^"<back:#ECEFF1>Device Information</back>"
+    {
+      <back:#ECEFF1><color:#546E7A><size:10>Пристрій: IoT Браслет #0245</size></color> |
+      <back:#ECEFF1><color:#2E7D32><size:10>📶 Зв'язок: Стабільний (LTE)</size></color> |
+      <back:#ECEFF1><color:#1976D2><size:10>📡 GPS: Активний (±2м точність)</size></color> |
+      <back:#ECEFF1><color:#F57C00><size:10>🔋 Батарея: 85% (≈10 год)</size></color>
+    }
+  }
+  ====
+  {
+    <back:#FFFFFF>
+    .
+    <back:#FFFFFF><color:#78909C><size:9>🔊 Відтворюється звуковий сигнал (90 дБ)</size></color></back>
+    <back:#FFFFFF><color:#78909C><size:9>📳 Активна вібрація (рівень: максимальний)</size></color></back>
+    .
+  }
+}
+}
+
+legend right
+  |= <b>Alert Levels - Colors</b> |= HEX Code |= Usage |
+  | <back:#D32F2F>  </back> Critical Alert | #D32F2F | Критичні загрози |
+  | <back:#FFEBEE>  </back> Alert Background | #FFEBEE | Фон алертів |
+  | <back:#F57C00>  </back> Warning | #F57C00 | Попередження |
+  | <back:#FFF3E0>  </back> Warning Background | #FFF3E0 | Фон попереджень |
+  | <back:#2E7D32>  </back> Success/Safe | #2E7D32 | Підтвердження |
+  | <back:#E8F5E9>  </back> Success Background | #E8F5E9 | Успішні дії |
+  | <back:#1976D2>  </back> Info | #1976D2 | Інформація |
+  | <back:#E3F2FD>  </back> Info Background | #E3F2FD | Рекомендації |
+
+  |= <b>Performance Metrics</b> |= Value |= NFR |
+  | Alert generation time | 1.2 sec | NFR3.1 ✓ (<3s) |
+  | Display on IoT device | Immediate | NFR3.2 ✓ |
+  | Vibration + Sound | Active | NFR3.3 ✓ |
+  | Battery life | 10 hours left | NFR7.1 ✓ (>12h) |
+  | Waterproof rating | IP67 | NFR7.2 ✓ |
+  | GPS accuracy | ±2 meters | - |
+  | Sound level | 90 dB | - |
+endlegend
+
+note bottom
+  <b>Mockup Details:</b>
+
+  **Critical Alert Features:**
+  • Full-screen red alert banner (impossible to miss)
+  • Large font sizes for readability in outdoor conditions
+  • High contrast colors (white on red, black on light backgrounds)
+  • Multiple hazards listed with severity indicators
+  • Immediate recommendations with numbered steps
+  • Two large action buttons (easy to press with gloves)
+
+  **Sensory Alerts (NFR3.3):**
+  • 🔊 Sound: 90 dB alarm (audible over construction noise)
+  • 📳 Vibration: Maximum intensity (tactile feedback)
+  • 🔴 Visual: Full-screen red alert (visual feedback)
+  • ⏱️ Triple redundancy ensures worker notices the alert
+
+  **Real-time Data:**
+  • Timestamp of detection: 10:45:32
+  • Processing delay: 1.2 sec (well under 3 sec NFR3.1)
+  • Biometric data: Elevated heart rate (125 bpm) indicates stress
+  • Precise location: Zone A, Floor 3, Sector 12
+
+  **Automatic Actions:**
+  • Notifications sent to all responsible personnel
+  • Alert logged in central database
+  • Camera recording activated (if available)
+  • GPS coordinates transmitted
+
+  **Accessibility for Construction Workers:**
+  • Large touch targets (min 60x60px for gloves)
+  • High contrast ratios (readable in bright sunlight)
+  • Simple binary choices (Safe / Help)
+  • No complex interactions required
+  • Icons + text for clarity
+
+  **Battery Management (NFR7.1):**
+  • Current charge: 85%
+  • Estimated runtime: ≈10 hours
+  • Warning threshold: <20% (would show orange)
+  • Critical threshold: <10% (would show red)
+end note
+
+@enduml

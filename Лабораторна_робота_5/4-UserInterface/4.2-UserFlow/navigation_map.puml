@@ -1,0 +1,166 @@
+@startuml SafeHeight_Monitor_Navigation_Map
+!define SCREEN_COLOR #E3F2FD
+!define ARROW_COLOR #1976D2
+
+skinparam rectangle {
+  BackgroundColor SCREEN_COLOR
+  BorderColor ARROW_COLOR
+  FontColor #000000
+  FontSize 11
+}
+
+skinparam arrow {
+  Color ARROW_COLOR
+  Thickness 2
+}
+
+title SafeHeight Monitor - Navigation Map\n(Screen-to-Screen Transitions)
+
+rectangle "**WF-01**\nЕкран автентифікації\n\n- Вибір ролі\n- QR/PIN/Логін\n- Реєстрація\n- Відновлення пароля" as LOGIN #FFE0B2
+
+rectangle "**WF-02**\nПанель моніторингу\n\n- Таблиця працівників\n- Карта майданчику\n- Пошук/Фільтри\n- Автооновлення" as MONITORING
+
+rectangle "**WF-03**\nEкран попередження\n(IoT пристрій)\n\n- Критичний алерт\n- Деталі загроз\n- Рекомендації\n- Кнопки реакції" as ALERT #FFEBEE
+
+rectangle "**WF-04**\nКерування зонами\n\n- Карта зон\n- Таблиця зон\n- Моя бригада\n- Редагування зон" as ZONES
+
+rectangle "**WF-05**\nАналітика та звітність\n\n- Метрики KPI\n- Графіки трендів\n- Топ зон\n- Рекомендації" as ANALYTICS
+
+rectangle "Деталі працівника\n\n- Повна інформація\n- Історія статусів\n- Медичні дані\n- Графік переміщень" as WORKER_DETAILS
+
+rectangle "Налаштування системи\n\n- Правила безпеки\n- Пороги попереджень\n- Налаштування зон\n- Сповіщення" as SETTINGS
+
+rectangle "IoT пристрої\n\n- Список пристроїв\n- Статус (Online/Offline)\n- Призначення\n- Діагностика" as IOT_DEVICES
+
+rectangle "Бібліотека документів\n\n- Збережені звіти\n- Шаблони\n- Експортовані файли\n- Історія" as DOCUMENTS
+
+rectangle "Створення/Редагування зони\n\n- Параметри зони\n- Малювання на карті\n- Призначення працівників" as ZONE_EDITOR
+
+rectangle "Канал зв'язку\n\n- Голосовий зв'язок\n- Текстові повідомлення\n- Історія комунікацій" as COMMUNICATION
+
+rectangle "Деталі зони\n\n- Історія інцидентів\n- Список працівників\n- Графік ризиків\n- Рекомендації" as ZONE_DETAILS
+
+rectangle "Адміністративна панель\n\n- Керування користувачами\n- Налаштування системи\n- Логи\n- Backup" as ADMIN #F3E5F5
+
+' ========== AUTHENTICATION FLOW ==========
+LOGIN -down-> MONITORING : Інженер з ОП\nБригадир\nАдміністратор
+LOGIN -down-> ZONES : Бригадир\n(альтернативний старт)
+LOGIN -down-> ANALYTICS : Менеджер проекту
+LOGIN -down-> ALERT : Працівник\n(IoT пристрій)
+LOGIN -down-> ADMIN : Системний\nадміністратор
+
+' ========== MONITORING DASHBOARD ==========
+MONITORING -right-> WORKER_DETAILS : [Деталі]\nпрацівника
+WORKER_DETAILS -left-> MONITORING : Назад
+
+MONITORING -down-> COMMUNICATION : [Зв'язок]\nз працівником
+COMMUNICATION -up-> MONITORING : Закрити
+
+MONITORING -up-> SETTINGS : Вкладка\n"Налаштування"
+SETTINGS -down-> MONITORING : Назад
+
+MONITORING -up-> IOT_DEVICES : Вкладка\n"IoT пристрої"
+IOT_DEVICES -down-> MONITORING : Назад
+
+MONITORING <--> ANALYTICS : Вкладка\n"Звіти"
+
+MONITORING <--> ZONES : Вкладка\n"Зони"\n(для бригадира)
+
+' ========== ZONES MANAGEMENT ==========
+ZONES -right-> ZONE_EDITOR : [Створити]\n[Редагувати]\nзону
+ZONE_EDITOR -left-> ZONES : Зберегти/\nСкасувати
+
+ZONES <--> MONITORING : Вкладка\n"Панель"
+
+ZONES -down-> COMMUNICATION : [Зв'язок]\nз працівником
+COMMUNICATION -up-> ZONES : Закрити
+
+' ========== ANALYTICS & REPORTING ==========
+ANALYTICS -down-> ZONE_DETAILS : [Деталі]\nзони
+ZONE_DETAILS -up-> ANALYTICS : Назад
+
+ANALYTICS -right-> DOCUMENTS : Вкладка\n"Документи"
+DOCUMENTS -left-> ANALYTICS : Назад
+
+ANALYTICS <--> MONITORING : Вкладка\n"Панель"
+
+' ========== IOT ALERT SCREEN ==========
+ALERT -up-> ALERT : Працівник працює\nна майданчику\n(постійний моніторинг)
+
+' ========== NOTES ==========
+note right of LOGIN
+  <b>Вхідна точка системи</b>
+
+  Підтримувані ролі:
+  • Працівник
+  • Інженер з ОП
+  • Бригадир
+  • Менеджер проекту
+  • Системний адміністратор
+end note
+
+note right of MONITORING
+  <b>Головна робоча панель</b>
+
+  Автооновлення: кожні 5 сек
+
+  Доступно для:
+  • Інженер з ОП (всі працівники)
+  • Бригадир (тільки своя бригада)
+  • Адміністратор
+end note
+
+note right of ALERT
+  <b>Мобільний IoT інтерфейс</b>
+
+  Відображається автоматично
+  при виявленні ризику
+
+  Пристрої:
+  • Смарт-браслет
+  • Смарт-каска з екраном
+  • Мобільний додаток
+end note
+
+note left of ZONES
+  <b>Керування територією</b>
+
+  Доступно для:
+  • Бригадир
+  • Інженер з ОП (тільки перегляд)
+end note
+
+note left of ANALYTICS
+  <b>Аналітика та звіти</b>
+
+  Доступно для:
+  • Менеджер проекту
+  • Інженер з ОП
+  • Адміністратор
+
+  Експорт: PDF, Excel
+end note
+
+note bottom of ADMIN
+  <b>Адмін панель</b>
+
+  Тільки для системного
+  адміністратора
+
+  Повний доступ до всіх
+  функцій системи
+end note
+
+legend right
+  |= Кольори |= Значення |
+  | <back:#FFE0B2>   </back> | Точка входу (Login) |
+  | <back:#FFEBEE>   </back> | Критичний екран (Alert) |
+  | <back:#F3E5F5>   </back> | Адмін панель |
+  | <back:#E3F2FD>   </back> | Стандартні екрани |
+
+  |= Символи |= Значення |
+  | --> | Односторонній перехід |
+  | <--> | Двосторонній перехід |
+endlegend
+
+@enduml

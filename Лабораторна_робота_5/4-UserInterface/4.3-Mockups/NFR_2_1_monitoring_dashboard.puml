@@ -1,0 +1,173 @@
+@startuml NFR_2_1_Monitoring_Dashboard_Mockup
+' NFR2.1: Система повинна оновлювати дані моніторингу кожні 5 секунд
+' NFR2.2: Затримка відображення статусу працівника <3 секунд
+' NFR2.3: Підтримка одночасного моніторингу 500+ працівників
+' NFR3.1: Система повинна генерувати попередження за <3 секунди після виявлення ризику
+
+skinparam backgroundColor #F5F7FA
+
+salt
+{+
+  {^"<back:#1976D2>Top Navigation Bar</back>"
+    {
+      <back:#1976D2><color:white><size:15><b>SafeHeight Monitor</b></size></color></back> |
+      <back:#1976D2><color:white><size:12>📊 <u>Панель моніторингу</u></size></color></back> |
+      <back:#1976D2><color:#B3E5FC><size:12>📈 Звіти</size></color></back> |
+      <back:#1976D2><color:#B3E5FC><size:12>⚙️ Налаштування</size></color></back> |
+      <back:#1976D2><color:white><size:12>🔔 <b>(3)</b></size></color></back> |
+      <back:#1976D2><color:white><size:12>👤 Інженер О.П.</size></color></back> |
+      <back:#1976D2><color:white><size:12>🚪 Вихід</size></color></back>
+    }
+  }
+  ====
+  {^"<back:#FFFFFF>Control Panel</back>"
+    {+
+      <back:#FFFFFF>
+      .
+      {
+        <back:#1976D2><color:white>[ 🔄 Оновити ]</color></back> |
+        <back:#FFFFFF><color:#78909C><size:10>Автооновлення: <color:#2E7D32><b>5 сек</b></color></size></color></back> |
+        <back:#FFFFFF>[ 🔍 <color:#78909C>Пошук працівників...</color>                                  ]</back> |
+        <back:#FFFFFF>Статус: [<color:#546E7A> Всі статуси ^</color>]</back> |
+        <back:#FFFFFF>Зона: [<color:#546E7A> Всі зони ^</color>]</back> |
+        <back:#FFFFFF>Сортування: [<color:#546E7A> За ризиком ^</color>]</back> |
+        <back:#ECEFF1><color:#546E7A>[ 📥 Експорт ]</color></back>
+      }
+      .
+    }
+  }
+  ====
+  {+
+    {^"<back:#FFFFFF>Workers Monitoring Table</back>"
+      <back:#FFFFFF>
+      {T!
+        -! | <back:#ECEFF1><b>ID</b></back> | <back:#ECEFF1><b>Ім'я працівника</b></back> | <back:#ECEFF1><b>Статус</b></back> | <back:#ECEFF1><b>Зона</b></back> | <back:#ECEFF1><b>Поверх</b></back> | <back:#ECEFF1><b>Ризик</b></back> | <back:#ECEFF1><b>Оновлення</b></back> | <back:#ECEFF1><b>Дії</b></back>
+        <back:#FFEBEE><color:red><b>●</b></color></back> | <back:#FFEBEE>#0245</back> | <back:#FFEBEE>Іванов І.П.</back> | <back:#D32F2F><color:white><b> КРИТИЧНО </b></color></back> | <back:#FFEBEE>Зона A</back> | <back:#FFEBEE>3</back> | <back:#FFEBEE><color:red><b>95%</b></color></back> | <back:#FFEBEE><color:#C62828><b>10:45:32</b></color></back> | <back:#FFEBEE>[<color:#1976D2>Деталі</color>] [<color:#D32F2F>Зв'язок</color>]</back>
+        <back:#FFF3E0><color:orange><b>●</b></color></back> | <back:#FFF3E0>#0187</back> | <back:#FFF3E0>Петренко М.С.</back> | <back:#F57C00><color:white><b> УВАГА </b></color></back> | <back:#FFF3E0>Зона B</back> | <back:#FFF3E0>2</back> | <back:#FFF3E0><color:orange><b>75%</b></color></back> | <back:#FFF3E0><color:#E65100>10:45:30</color></back> | <back:#FFF3E0>[<color:#1976D2>Деталі</color>] [<color:#F57C00>Зв'язок</color>]</back>
+        <back:#FFFFFF><color:green>✓</color></back> | <back:#FFFFFF>#0312</back> | <back:#FFFFFF>Сидоренко О.В.</back> | <back:#2E7D32><color:white><b> Безпечно </b></color></back> | <back:#FFFFFF>Зона A</back> | <back:#FFFFFF>1</back> | <back:#FFFFFF><color:green>10%</color></back> | <back:#FFFFFF><color:#546E7A>10:45:31</color></back> | <back:#FFFFFF>[<color:#1976D2>Деталі</color>] [<color:#546E7A>Зв'язок</color>]</back>
+        <back:#FFFFFF><color:green>✓</color></back> | <back:#FFFFFF>#0421</back> | <back:#FFFFFF>Коваленко Т.Д.</back> | <back:#2E7D32><color:white><b> Безпечно </b></color></back> | <back:#FFFFFF>Зона C</back> | <back:#FFFFFF>4</back> | <back:#FFFFFF><color:green>5%</color></back> | <back:#FFFFFF><color:#546E7A>10:45:29</color></back> | <back:#FFFFFF>[<color:#1976D2>Деталі</color>] [<color:#546E7A>Зв'язок</color>]</back>
+        <back:#FFFFFF><color:green>✓</color></back> | <back:#FFFFFF>#0156</back> | <back:#FFFFFF>Мельник А.І.</back> | <back:#2E7D32><color:white><b> Безпечно </b></color></back> | <back:#FFFFFF>Зона A</back> | <back:#FFFFFF>2</back> | <back:#FFFFFF><color:green>8%</color></back> | <back:#FFFFFF><color:#546E7A>10:45:30</color></back> | <back:#FFFFFF>[<color:#1976D2>Деталі</color>] [<color:#546E7A>Зв'язок</color>]</back>
+      }
+      ----
+      <back:#FFFFFF>
+      .
+      <back:#FFFFFF><color:#546E7A><size:11>Показано: 1-5 з 28 працівників</size></color></back> |
+      <back:#ECEFF1><color:#546E7A>[ < ]</color></back> |
+      <back:#1976D2><color:white><b>[ 1 ]</b></color></back> |
+      <back:#ECEFF1><color:#546E7A>[ 2 ]</color></back> |
+      <back:#ECEFF1><color:#546E7A>[ 3 ]</color></back> |
+      <back:#ECEFF1><color:#546E7A>[ > ]</color></back>
+      .
+    }
+    ====
+    {^"<back:#FFFFFF>Interactive Site Map</back>"
+      {+
+        <back:#FFFFFF>
+        .
+        <back:#FFFFFF><size:13><b>Карта будівельного майданчику</b></size></back>
+        <back:#FFFFFF><color:#78909C><size:10>Оновлено: <color:#2E7D32><b>10:45:32</b></color> (автооновлення активне)</size></color></back>
+        .
+        <back:#FAFAFA>[═══════════════════════════════════════════════════════════]</back>
+        <back:#FAFAFA>[                                                          ]</back>
+        <back:#FAFAFA>[       <back:#E3F2FD>┌──────────────┐</back>     <back:#FFF9C4>┌──────────────┐</back>       ]</back>
+        <back:#FAFAFA>[       <back:#E3F2FD>│   Зона A     │</back>     <back:#FFF9C4>│   Зона B     │</back>       ]</back>
+        <back:#FAFAFA>[       <back:#E3F2FD>│ Фасадні роб. │</back>     <back:#FFF9C4>│ Внутрішні р. │</back>       ]</back>
+        <back:#FAFAFA>[       <back:#E3F2FD>│  (1-3 пв)    │</back>     <back:#FFF9C4>│  (2-4 пв)    │</back>       ]</back>
+        <back:#FAFAFA>[       <back:#E3F2FD>│              │</back>     <back:#FFF9C4>│              │</back>       ]</back>
+        <back:#FAFAFA>[       <back:#E3F2FD>│  <color:red>● #0245</color>    │</back>     <back:#FFF9C4>│  <color:orange>● #0187</color>    │</back>       ]</back>
+        <back:#FAFAFA>[       <back:#E3F2FD>│  <color:green>● #0312</color>    │</back>     <back:#FFF9C4>│              │</back>       ]</back>
+        <back:#FAFAFA>[       <back:#E3F2FD>│  <color:green>● #0156</color>    │</back>     <back:#FFF9C4>│              │</back>       ]</back>
+        <back:#FAFAFA>[       <back:#E3F2FD>│              │</back>     <back:#FFF9C4>│              │</back>       ]</back>
+        <back:#FAFAFA>[       <back:#E3F2FD>└──────────────┘</back>     <back:#FFF9C4>└──────────────┘</back>       ]</back>
+        <back:#FAFAFA>[                                                          ]</back>
+        <back:#FAFAFA>[              <back:#C8E6C9>┌────────────────────┐</back>                ]</back>
+        <back:#FAFAFA>[              <back:#C8E6C9>│      Зона C        │</back>                ]</back>
+        <back:#FAFAFA>[              <back:#C8E6C9>│ Покрівельні роботи │</back>                ]</back>
+        <back:#FAFAFA>[              <back:#C8E6C9>│     (1-6 пв)       │</back>                ]</back>
+        <back:#FAFAFA>[              <back:#C8E6C9>│                    │</back>                ]</back>
+        <back:#FAFAFA>[              <back:#C8E6C9>│      <color:green>● #0421</color>       │</back>                ]</back>
+        <back:#FAFAFA>[              <back:#C8E6C9>│                    │</back>                ]</back>
+        <back:#FAFAFA>[              <back:#C8E6C9>└────────────────────┘</back>                ]</back>
+        <back:#FAFAFA>[                                                          ]</back>
+        <back:#FAFAFA>[═══════════════════════════════════════════════════════════]</back>
+        .
+        <back:#FFFFFF><color:red><b>●</b></color> Критично</color> |
+        <back:#FFFFFF><color:orange><b>●</b></color> Увага</color> |
+        <back:#FFFFFF><color:green><b>●</b></color> Безпечно</color> |
+        <back:#ECEFF1><color:#546E7A>[ ⛶ Повноекранний режим ]</color></back> |
+        <back:#ECEFF1><color:#546E7A>[ ⚙ Налаштувати зони ]</color></back>
+        .
+      }
+    }
+  }
+  ====
+  {^"<back:#ECEFF1>Status Bar</back>"
+    {
+      <back:#ECEFF1>
+      .
+      <back:#ECEFF1><size:11><b>Всього працівників: <color:#1976D2>28</color></b></size></back> |
+      <back:#ECEFF1><size:11>На зміні: <color:#1976D2><b>25</b></color></size></back> |
+      <back:#E8F5E9><color:#2E7D32><size:11><b>✓ Безпечно: 22</b></size></color></back> |
+      <back:#FFF3E0><color:#F57C00><size:11><b>⚠ Увага: 2</b></size></color></back> |
+      <back:#FFEBEE><color:#D32F2F><size:11><b>⚠ Критично: 1</b></size></color></back> |
+      <back:#ECEFF1><size:11>Офлайн: <color:#78909C>3</color></size></back> |
+      <back:#ECEFF1><size:11>Останнє оновлення: <color:#2E7D32><b>10:45:32</b></color></size></back> |
+      <back:#E8F5E9><color:#2E7D32><size:11>📶 З'єднання: <b>Стабільне</b></size></color></back>
+      .
+    }
+  }
+}
+}
+
+legend right
+  |= <b>Design System - Colors</b> |= HEX Code |= Usage |
+  | <back:#D32F2F>  </back> Error (Red 700) | #D32F2F | Критичний статус |
+  | <back:#FFEBEE>  </back> Error Light (Red 50) | #FFEBEE | Critical row bg |
+  | <back:#F57C00>  </back> Warning (Orange 700) | #F57C00 | Попередження |
+  | <back:#FFF3E0>  </back> Warning Light (Orange 50) | #FFF3E0 | Warning row bg |
+  | <back:#2E7D32>  </back> Success (Green 700) | #2E7D32 | Безпечний статус |
+  | <back:#E8F5E9>  </back> Success Light (Green 50) | #E8F5E9 | Safe indicators |
+  | <back:#1976D2>  </back> Primary (Blue 700) | #1976D2 | Interactive |
+  | <back:#546E7A>  </back> Text Secondary | #546E7A | Secondary text |
+  | <back:#FAFAFA>  </back> Surface Variant | #FAFAFA | Map background |
+
+  |= <b>Performance Metrics</b> |= Value |= NFR |
+  | Auto-refresh interval | 5 sec | NFR2.1 ✓ |
+  | Status display latency | <3 sec | NFR2.2 ✓ |
+  | Max concurrent workers | 500+ | NFR2.3 ✓ |
+  | Alert generation time | <3 sec | NFR3.1 ✓ |
+  | Table pagination | 25/page | - |
+endlegend
+
+note bottom
+  <b>Mockup Details:</b>
+
+  **Real-time Features:**
+  • Green indicator "Автооновлення: 5 сек" shows active refresh
+  • Timestamps показані для кожного працівника
+  • Status bar updates every 5 seconds
+  • Critical alerts highlighted with red background
+  • Connection status indicator (green = stable)
+
+  **Visual Hierarchy:**
+  • Critical rows: Red background (#FFEBEE)
+  • Warning rows: Orange background (#FFF3E0)
+  • Safe rows: White background
+  • Sorted by risk level (highest first)
+
+  **Interactive Elements:**
+  • [Оновити] button - manual refresh
+  • Search bar - real-time filtering
+  • Dropdowns - status and zone filters
+  • [Деталі] / [Зв'язок] buttons - actions per worker
+  • Map zones - clickable for zone details
+  • Pagination controls
+
+  **Accessibility:**
+  • Color-coded + icon indicators (not just color)
+  • High contrast for critical information
+  • Clear timestamps for data freshness
+  • Status badges with text labels
+end note
+
+@enduml

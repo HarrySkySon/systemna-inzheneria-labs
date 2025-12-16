@@ -1,0 +1,301 @@
+@startuml NFR_8_1_Analytics_Reporting_Mockup
+' NFR8.1: Система повинна генерувати звіти з безпеки за день/тиждень/місяць
+' NFR8.2: Звіти повинні включати графіки трендів та статистику інцидентів
+' NFR8.3: Експорт звітів у форматах PDF та Excel
+' NFR10.1: Система повинна зберігати історію подій мінімум 1 рік
+' NFR10.2: Пошук у історії подій повинен виконуватися за <5 секунд
+
+skinparam backgroundColor #F5F7FA
+
+salt
+{+
+  {^"<back:#1976D2>Top Navigation</back>"
+    {
+      <back:#1976D2><color:white><size:15><b>SafeHeight Monitor</b></size></color></back> |
+      <back:#1976D2><color:#B3E5FC><size:12>📊 Панель</size></color></back> |
+      <back:#1976D2><color:white><size:12>📈 <u>Звіти</u></size></color></back> |
+      <back:#1976D2><color:#B3E5FC><size:12>📁 Документи</size></color></back> |
+      <back:#1976D2><color:#B3E5FC><size:12>⚙️ Налаштування</size></color></back> |
+      <back:#1976D2><color:white><size:12>👤 Менеджер проекту</size></color></back> |
+      <back:#1976D2><color:white><size:12>🚪 Вихід</size></color></back>
+    }
+  }
+  ====
+  {^"<back:#FFFFFF>Report Header</back>"
+    {+
+      <back:#FFFFFF>
+      .
+      <back:#FFFFFF><size:20><b>📊 Аналітика та звітність з безпеки</b></size></back>
+      .
+      <back:#FFFFFF><color:#78909C><size:12>Комплексний аналіз показників безпеки на будівельному майданчику</size></color></back>
+      .
+    }
+  }
+  ====
+  {^"<back:#E3F2FD>Report Configuration</back>"
+    {+
+      <back:#E3F2FD>
+      .
+      {
+        <back:#E3F2FD><size:12><b>Період звітності:</b></size></back> |
+        <back:#FFFFFF>[<color:#546E7A> Останній місяць (2025-11-14 - 2025-12-14) ^</color>]</back> |
+        <back:#E3F2FD>або:</back> |
+        <back:#E3F2FD>Від:</back> [<color:#546E7A> 2025-11-14 </color>] |
+        <back:#E3F2FD>До:</back> [<color:#546E7A> 2025-12-14 </color>]
+      }
+      .
+      {
+        <back:#1976D2><color:white>[ ⚡ Генерувати звіт ]</color></back> |
+        <back:#D32F2F><color:white>[ 📄 Експорт PDF ]</color></back> |
+        <back:#2E7D32><color:white>[ 📊 Експорт Excel ]</color></back> |
+        <back:#1565C0><color:white>[ 📧 Відправити email ]</color></back> |
+        <back:#546E7A><color:white>[ 🖨️ Друк ]</color></back>
+      }
+      .
+    }
+  }
+  ====
+  {+
+    {^"<back:#FFFFFF>Key Performance Indicators (KPI)</back>"
+      {+
+        <back:#FFFFFF>
+        .
+        <back:#FFFFFF><size:14><b>Ключові показники за період (30 днів)</b></size></back>
+        .
+        {
+          {^"<back:#E8F5E9>Total Warnings</back>"
+            <back:#E8F5E9>
+            .
+            <back:#E8F5E9><color:#2E7D32><size:28><b>247</b></size></color></back>
+            <back:#E8F5E9><size:11>Всього попереджень</size></back>
+            <back:#E8F5E9><color:#388E3C><size:9>▼ -12% від попер. періоду</size></color></back>
+            .
+          } |
+          {^"<back:#FFF3E0>Warning Level</back>"
+            <back:#FFF3E0>
+            .
+            <back:#FFF3E0><color:#F57C00><size:28><b>198</b></size></color></back>
+            <back:#FFF3E0><size:11>Рівень "Увага"</size></back>
+            <back:#FFF3E0><color:#F57C00><size:9>(80% від загальних)</size></color></back>
+            .
+          } |
+          {^"<back:#FFEBEE>Critical Level</back>"
+            <back:#FFEBEE>
+            .
+            <back:#FFEBEE><color:#D32F2F><size:28><b>49</b></size></color></back>
+            <back:#FFEBEE><size:11>Рівень "Критично"</size></back>
+            <back:#FFEBEE><color:#D32F2F><size:9>(20% від загальних)</size></color></back>
+            .
+          } |
+          {^"<back:#E3F2FD>Daily Average</back>"
+            <back:#E3F2FD>
+            .
+            <back:#E3F2FD><color:#1976D2><size:28><b>8.2</b></size></color></back>
+            <back:#E3F2FD><size:11>Середньо на день</size></back>
+            <back:#E3F2FD><color:#1976D2><size:9>Пік: 15 (2025-11-23)</size></color></back>
+            .
+          }
+        }
+        ----
+        {
+          {^"<back:#F3E5F5>AI Accuracy</back>"
+            <back:#F3E5F5>
+            .
+            <back:#F3E5F5><color:#7B1FA2><size:28><b>96.5%</b></size></color></back>
+            <back:#F3E5F5><size:11>Точність AI моделі</size></back>
+            <back:#F3E5F5><color:#7B1FA2><size:9>Мета: >95%</size></color></back>
+            .
+          } |
+          {^"<back:#E0F2F1>Response Time</back>"
+            <back:#E0F2F1>
+            .
+            <back:#E0F2F1><color:#00796B><size:28><b>1.8с</b></size></color></back>
+            <back:#E0F2F1><size:11>Середній час реакції</size></back>
+            <back:#E0F2F1><color:#00796B><size:9>Мета: <3 сек</size></color></back>
+            .
+          } |
+          {^"<back:#E8F5E9>Zero Incidents</back>"
+            <back:#E8F5E9>
+            .
+            <back:#E8F5E9><color:#2E7D32><size:28><b>0</b></size></color></back>
+            <back:#E8F5E9><size:11>Реальних інцидентів</size></back>
+            <back:#E8F5E9><color:#2E7D32><size:9>✓ 100% запобігання</size></color></back>
+            .
+          } |
+          {^"<back:#FFF8E1>Uptime</back>"
+            <back:#FFF8E1>
+            .
+            <back:#FFF8E1><color:#F9A825><size:28><b>99.7%</b></size></color></back>
+            <back:#FFF8E1><size:11>Uptime системи</size></back>
+            <back:#FFF8E1><color:#F57F17><size:9>2.16 год downtime</size></color></back>
+            .
+          }
+        }
+        .
+      }
+    }
+    ====
+    {^"<back:#FFFFFF>Trends Chart</back>"
+      {+
+        <back:#FFFFFF>
+        .
+        <back:#FFFFFF><size:14><b>Графік трендів попереджень за період</b></size></back>
+        .
+        {
+          <back:#ECEFF1><color:#546E7A>[ День ]</color></back> |
+          <back:#ECEFF1><color:#546E7A>[ Тиждень ]</color></back> |
+          <back:#1976D2><color:white><b>[ Місяць ]</b></color></back> |
+          <back:#FFFFFF>""</back> |
+          <back:#ECEFF1><color:#546E7A>[ 🔍 Збільшити ]</color></back> |
+          <back:#ECEFF1><color:#546E7A>[ 💾 Завантажити дані ]</color></back>
+        }
+        .
+        <back:#FAFAFA>[═══════════════════════════════════════════════════════════════]</back>
+        <back:#FAFAFA>[                                                              ]</back>
+        <back:#FAFAFA>[  <color:#546E7A>15</color> ┤                                    <color:red>●</color>                ]</back>
+        <back:#FAFAFA>[     │                                                       ]</back>
+        <back:#FAFAFA>[  <color:#546E7A>12</color> ┤                    <color:red>●</color>                              ]</back>
+        <back:#FAFAFA>[     │                                                       ]</back>
+        <back:#FAFAFA>[  <color:#546E7A>10</color> ┤         <color:orange>●</color>  <color:orange>●</color>         <color:orange>●</color>         <color:orange>●</color>         <color:orange>●</color>       ]</back>
+        <back:#FAFAFA>[     │                                                       ]</back>
+        <back:#FAFAFA>[   <color:#546E7A>8</color> ┤   <color:orange>●</color>                   <color:orange>●</color>  <color:orange>●</color>         <color:orange>●</color>             ]</back>
+        <back:#FAFAFA>[     │                                                       ]</back>
+        <back:#FAFAFA>[   <color:#546E7A>5</color> ┤                                                       ]</back>
+        <back:#FAFAFA>[     │                                                       ]</back>
+        <back:#FAFAFA>[   <color:#546E7A>0</color> └───────────────────────────────────────────────────────]</back>
+        <back:#FAFAFA>[      <color:#546E7A>1     7     14    21    28    днів місяця</color>             ]</back>
+        <back:#FAFAFA>[                                                              ]</back>
+        <back:#FAFAFA>[═══════════════════════════════════════════════════════════════]</back>
+        .
+        <back:#FFFFFF><color:orange>━━━━</color> Рівень "Увага"</back> |
+        <back:#FFFFFF><color:red>━━━━</color> Рівень "Критично"</back> |
+        <back:#FFFFFF><color:#2E7D32>━━━━</color> Цільовий показник</back>
+        .
+      }
+    }
+    ====
+    {^"<back:#FFFFFF>High-Risk Zones Analysis</back>"
+      {+
+        <back:#FFFFFF>
+        .
+        <back:#FFFFFF><size:14><b>Топ-5 зон з найбільшим ризиком</b></size></back>
+        .
+        {T!
+          + | <back:#ECEFF1><b>Ранг</b></back> | <back:#ECEFF1><b>Назва зони</b></back> | <back:#ECEFF1><b>Тип робіт</b></back> | <back:#ECEFF1><b>Попереджень</b></back> | <back:#ECEFF1><b>% від загальних</b></back> | <back:#ECEFF1><b>Тренд</b></back> | <back:#ECEFF1><b>Дії</b></back>
+          <back:#FFEBEE><color:red><b>🔴</b></color></back> | <back:#FFEBEE>1</back> | <back:#FFEBEE>Зона A - Фасадні роботи</back> | <back:#FFEBEE>Високі роботи</back> | <back:#FFEBEE><b>98</b></back> | <back:#FFEBEE><b>40%</b></back> | <back:#FFEBEE><color:red>▲ +15%</color></back> | <back:#FFEBEE>[<color:#1976D2>Деталі</color>] [<color:#D32F2F>Рекомендації</color>]</back>
+          <back:#FFF3E0><color:orange><b>🟠</b></color></back> | <back:#FFF3E0>2</back> | <back:#FFF3E0>Зона C - Покрівельні роботи</back> | <back:#FFF3E0>Високі роботи</back> | <back:#FFF3E0><b>72</b></back> | <back:#FFF3E0><b>29%</b></back> | <back:#FFF3E0><color:orange>▲ +8%</color></back> | <back:#FFF3E0>[<color:#1976D2>Деталі</color>] [<color:#F57C00>Рекомендації</color>]</back>
+          <back:#FFFFFF>🟡</back> | <back:#FFFFFF>3</back> | <back:#FFFFFF>Зона B - Внутрішні роботи</back> | <back:#FFFFFF>Середні роботи</back> | <back:#FFFFFF>45</back> | <back:#FFFFFF>18%</back> | <back:#FFFFFF><color:green>▼ -3%</color></back> | <back:#FFFFFF>[<color:#1976D2>Деталі</color>] [<color:#546E7A>Рекомендації</color>]</back>
+          <back:#FFFFFF>4</back> | <back:#FFFFFF>4</back> | <back:#FFFFFF>Зона D - Ліфтова шахта</back> | <back:#FFFFFF>Високі роботи</back> | <back:#FFFFFF>22</back> | <back:#FFFFFF>9%</back> | <back:#FFFFFF><color:green>▼ -5%</color></back> | <back:#FFFFFF>[<color:#1976D2>Деталі</color>] [<color:#546E7A>Рекомендації</color>]</back>
+          <back:#FFFFFF>5</back> | <back:#FFFFFF>5</back> | <back:#FFFFFF>Зона E - Підвал</back> | <back:#FFFFFF>Низькі роботи</back> | <back:#FFFFFF>10</back> | <back:#FFFFFF>4%</back> | <back:#FFFFFF><color:#546E7A>═ 0%</color></back> | <back:#FFFFFF>[<color:#1976D2>Деталі</color>] [<color:#546E7A>Рекомендації</color>]</back>
+        }
+        .
+      }
+    }
+  }
+  ====
+  {^"<back:#FFF9C4>AI-Generated Recommendations</back>"
+    {+
+      <back:#FFF9C4>
+      .
+      <back:#FFF9C4><color:#F57C00><size:14><b>⚠ Автоматичні рекомендації системи</b></size></color></back>
+      .
+      <back:#FFF9C4><color:#D32F2F><b>🔴 ВИСОКИЙ ПРІОРИТЕТ:</b></color></back>
+      .
+      <back:#FFF9C4><size:12><b>1. Зона A (Фасадні роботи)</b> - кількість інцидентів зросла на <color:red><b>15%</b></color> за місяць</size></back>
+      <back:#FFF9C4><size:10>   Рекомендації:</size></back>
+      <back:#FFF9C4><size:10>   • Провести додатковий інструктаж з техніки безпеки</size></back>
+      <back:#FFF9C4><size:10>   • Перевірити стан страхувального обладнання</size></back>
+      <back:#FFF9C4><size:10>   • Посилити контроль використання ЗІЗ</size></back>
+      .
+      <back:#FFF9C4><size:12><b>2. Покрівельні роботи (Зона C)</b> - підвищена кількість попереджень про висоту</size></back>
+      <back:#FFF9C4><size:10>   Рекомендації:</size></back>
+      <back:#FFF9C4><size:10>   • Встановити додаткові огородження по периметру</size></back>
+      <back:#FFF9C4><size:10>   • Організувати додаткові анкерні точки</size></back>
+      .
+    }
+  }
+  ====
+  {^"<back:#ECEFF1>Report Footer</back>"
+    {
+      <back:#ECEFF1>
+      .
+      <back:#ECEFF1><size:11>Звіт згенеровано: <b>2025-12-14 11:30:45</b></size></back> |
+      <back:#ECEFF1><size:11>Автор: <b>Менеджер проекту Іванова О.С.</b></size></back> |
+      <back:#ECEFF1><size:11>Період: <b>2025-11-14 - 2025-12-14 (30 днів)</b></size></back> |
+      <back:#E8F5E9><color:#2E7D32><size:11>Статус: <b>✓ Затверджено</b></size></color></back>
+      .
+      <back:#ECEFF1><color:#1976D2>[ 📋 Копіювати посилання ]</color></back> |
+      <back:#ECEFF1><color:#1976D2>[ 🔖 Зберегти як шаблон ]</color></back> |
+      <back:#ECEFF1><color:#1976D2>[ 🔗 Поділитися ]</color></back>
+      .
+    }
+  }
+}
+}
+
+legend right
+  |= <b>Design System - Colors</b> |= HEX Code |= Usage |
+  | <back:#E8F5E9>  </back> Success Light | #E8F5E9 | Positive metrics |
+  | <back:#FFF3E0>  </back> Warning Light | #FFF3E0 | Warning metrics |
+  | <back:#FFEBEE>  </back> Error Light | #FFEBEE | Critical metrics |
+  | <back:#E3F2FD>  </back> Info Light | #E3F2FD | Info metrics |
+  | <back:#F3E5F5>  </back> Purple Light | #F3E5F5 | AI metrics |
+  | <back:#FFF9C4>  </back> Yellow Light | #FFF9C4 | Recommendations |
+
+  |= <b>NFR Coverage</b> |= Status |
+  | NFR8.1: День/Тиждень/Місяць | ✓ Implemented |
+  | NFR8.2: Графіки + Статистика | ✓ Implemented |
+  | NFR8.3: Експорт PDF + Excel | ✓ Implemented |
+  | NFR10.1: Зберігання 1 рік | ✓ Backend |
+  | NFR10.2: Пошук <5 сек | ✓ Backend |
+
+  |= <b>Chart Types</b> ||
+  | Line Chart | Trends over time |
+  | KPI Cards | Key metrics |
+  | Data Table | Detailed info |
+  | Recommendations | AI-generated |
+endlegend
+
+note bottom
+  <b>Mockup Details:</b>
+
+  **Report Features (NFR8.1, NFR8.2, NFR8.3):**
+  • Period selection: Day / Week / Month / Custom range
+  • 8 KPI cards with color-coded metrics
+  • Line chart showing trends over selected period
+  • Top-5 zones table with risk analysis
+  • AI-generated recommendations with priority levels
+  • Export buttons: PDF, Excel, Email, Print
+  • Report metadata: timestamp, author, status
+
+  **Visual Data Representation:**
+  • Color-coded KPI cards (green=good, orange=warning, red=critical)
+  • Trend indicators (▲ increase, ▼ decrease, ═ stable)
+  • Line chart with orange/red data points
+  • Table with row highlighting (red/orange for high-risk zones)
+  • Progress comparison vs previous period
+  • Target achievement indicators
+
+  **Interactive Elements:**
+  • Period switcher (Day/Week/Month tabs)
+  • [Детал] and [Рекомендації] buttons for each zone
+  • Chart zoom and data download
+  • Export format selection
+  • Template save and sharing options
+
+  **Performance:**
+  • Report generation: <5 seconds (NFR10.2)
+  • Data from 1-year history (NFR10.1)
+  • Real-time calculations
+  • PDF generation: <10 seconds
+  • Excel export with formulas and charts
+
+  **AI Recommendations:**
+  • Priority-based (High/Medium/Low)
+  • Zone-specific actions
+  • Data-driven insights
+  • Actionable suggestions
+  • Expected outcomes
+end note
+
+@enduml

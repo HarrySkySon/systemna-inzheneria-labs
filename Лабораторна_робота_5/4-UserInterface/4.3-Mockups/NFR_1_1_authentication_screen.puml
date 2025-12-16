@@ -1,0 +1,195 @@
+@startuml NFR_1_1_Authentication_Screen_Mockup
+' NFR1.1: Система повинна підтримувати автентифікацію через QR-код за <15 секунд
+' NFR1.5: Система повинна підтримувати автентифікацію через PIN-код (6 цифр)
+' NFR6.1: UI повинен бути інтуїтивно зрозумілим (SUS >80)
+
+skinparam backgroundColor #F5F7FA
+
+salt
+{+
+  {^"<back:#1976D2><color:white><size:18><b>    SafeHeight Monitor    </b></size></color></back>"
+    {
+      <back:#1976D2><color:white>.                                                           .</color></back>
+      <back:#1976D2><color:white><size:11>Система моніторингу будівельних майданчиків</size></color></back>
+      <back:#1976D2><color:white>.                                                           .</color></back>
+    }
+  }
+  ====
+  {+
+    <back:#FFFFFF>
+    {
+      .
+      .
+      .
+      <back:#FFFFFF><size:24><b>Вхід у систему</b></size></back>
+      .
+      <back:#FFFFFF><color:#546E7A><size:12>Виберіть вашу роль та метод автентифікації</size></color></back>
+      .
+      .
+    }
+    ----
+    {^"<back:#FAFAFA>Виберіть роль користувача</back>"
+      {+
+        <back:#FFFFFF>
+        .
+        {
+          [ ] <back:#FFFFFF><size:13>👷 Працівник будівельного майданчику</size></back> |
+          <back:#FFFFFF><color:#78909C><size:10>Швидкий доступ через QR-код або PIN</size></color></back>
+        }
+        .
+        {
+          [ ] <back:#FFFFFF><size:13>👨‍💼 Інженер з охорони праці</size></back> |
+          <back:#FFFFFF><color:#78909C><size:10>Моніторинг всіх працівників</size></color></back>
+        }
+        .
+        {
+          [X] <back:#E3F2FD><color:#1976D2><size:13><b>👷‍♂️ Бригадир</b></size></color></back> |
+          <back:#E3F2FD><color:#1565C0><size:10><b>Керування зонами та бригадою</b></size></color></back>
+        }
+        .
+        {
+          [ ] <back:#FFFFFF><size:13>📊 Менеджер проекту</size></back> |
+          <back:#FFFFFF><color:#78909C><size:10>Аналітика та звітність</size></color></back>
+        }
+        .
+        {
+          [ ] <back:#FFFFFF><size:13>⚙️ Системний адміністратор</size></back> |
+          <back:#FFFFFF><color:#78909C><size:10>Налаштування системи</size></color></back>
+        }
+        .
+      }
+    }
+    ====
+    {^"<back:#FAFAFA>Метод автентифікації</back>"
+      {+
+        <back:#FFFFFF>
+        .
+        {T
+          + <back:#1976D2><color:white><b>  QR-код сканування  </b></color></back> | <back:#ECEFF1><color:#546E7A>  PIN-код  </color></back> | <back:#ECEFF1><color:#546E7A>  Логін/Пароль  </color></back>
+        }
+        .
+      }
+    }
+    ----
+    {+
+      <back:#FFFFFF>
+      {^"<back:#E3F2FD>QR-код сканер</back>"
+        {
+          <back:#FFFFFF>
+          .
+          .
+          <back:#FFFFFF>[                                                    ]</back>
+          <back:#FFFFFF>[      <back:#FAFAFA>┌─────────────────────────┐</back>       ]</back>
+          <back:#FFFFFF>[      <back:#FAFAFA>│                         │</back>       ]</back>
+          <back:#FFFFFF>[      <back:#FAFAFA>│    █ █▄ ▄█ █ ▄██▄      │</back>       ]</back>
+          <back:#FFFFFF>[      <back:#FAFAFA>│    ▀ ▀▄▀▀▀▀ █ ▀▀▀█      │</back>       ]</back>
+          <back:#FFFFFF>[      <back:#FAFAFA>│    █▄█ ▀▄▀▄ █▄▀██       │</back>       ]</back>
+          <back:#FFFFFF>[      <back:#FAFAFA>│    ██ ▀ ▀▀█ ▄█ ▀▀▀▄     │</back>       ]</back>
+          <back:#FFFFFF>[      <back:#FAFAFA>│    ▄█▀▀▀█▄▀ █▀▀█▄█      │</back>       ]</back>
+          <back:#FFFFFF>[      <back:#FAFAFA>│                         │</back>       ]</back>
+          <back:#FFFFFF>[      <back:#FAFAFA>└─────────────────────────┘</back>       ]</back>
+          <back:#FFFFFF>[                                                    ]</back>
+          .
+          <back:#FFFFFF><color:#1976D2>📷 <size:12><b>Наведіть камеру на QR-код вашого пристрою</b></size></color></back>
+          .
+          <back:#FFFFFF><color:#78909C><size:10>Система автоматично ідентифікує вас за <15 секунд</size></color></back>
+          .
+          .
+          <back:#FFFFFF>[ <back:#1976D2><color:white><b><size:14>  📸 Використати камеру пристрою  </size></b></color></back> ]</back>
+          .
+          .
+        }
+      }
+    }
+    ====
+    {+
+      <back:#FFFFFF>
+      .
+      .
+      [ <back:#1976D2><color:white><b><size:16>    Увійти в систему    </size></b></color></back> ]
+      " "
+      [ <back:#ECEFF1><color:#546E7A><size:14>    Скасувати    </size></color></back> ]
+      .
+      .
+    }
+    ====
+    {
+      <back:#FFFFFF>
+      .
+      <back:#FFFFFF><color:#1976D2>🔒 <u>Забули пароль?</u></color></back>
+      " "
+      " "
+      <back:#FFFFFF><color:#1976D2>👤 <u>Реєстрація нового користувача</u></color></back>
+      .
+    }
+    .
+  }
+  ====
+  {^"<back:#ECEFF1>Footer</back>"
+    {
+      <back:#ECEFF1><color:#546E7A><size:9>.                                                           .</size></color></back>
+      <back:#ECEFF1><color:#546E7A><size:10>© 2025 SafeHeight Monitor</size></color></back>
+      <back:#ECEFF1><color:#546E7A><size:10>|</size></color></back>
+      <back:#ECEFF1><color:#2E7D32><size:10>🔒 Безпечне з'єднання (SSL/TLS 1.3)</size></color></back>
+      <back:#ECEFF1><color:#546E7A><size:10>|</size></color></back>
+      <back:#ECEFF1><color:#546E7A><size:10>Версія 1.0.0</size></color></back>
+      <back:#ECEFF1><color:#546E7A><size:10>|</size></color></back>
+      <back:#ECEFF1><color:#1976D2><size:10>📞 Підтримка: +380 (44) 123-4567</size></color></back>
+      <back:#ECEFF1><color:#546E7A><size:9>.                                                           .</size></color></back>
+    }
+  }
+}
+}
+
+legend right
+  |= <b>Design System - Colors</b> |= HEX Code |
+  | <back:#1976D2>  </back> Primary (Blue 700) | #1976D2 |
+  | <back:#E3F2FD>  </back> Primary Light (Blue 50) | #E3F2FD |
+  | <back:#1565C0>  </back> Primary Dark (Blue 800) | #1565C0 |
+  | <back:#2E7D32>  </back> Success (Green 700) | #2E7D32 |
+  | <back:#F5F7FA>  </back> Background | #F5F7FA |
+  | <back:#FFFFFF>  </back> Surface | #FFFFFF |
+  | <back:#FAFAFA>  </back> Surface Variant | #FAFAFA |
+  | <back:#546E7A>  </back> Text Secondary | #546E7A |
+
+  |= <b>Typography</b> |= Size |
+  | Page Title | 24px, Bold |
+  | Section Header | 18px, Bold |
+  | Body Text | 13px, Regular |
+  | Caption | 10px, Regular |
+  | Button | 14-16px, Bold |
+
+  |= <b>NFR Coverage</b> ||
+  | NFR1.1 | QR-код <15 сек ✓ |
+  | NFR1.5 | PIN 6 цифр ✓ |
+  | NFR6.1 | SUS >80 ✓ |
+  | NFR6.2 | Accessibility ✓ |
+endlegend
+
+note bottom
+  <b>Mockup Details:</b>
+
+  **Interactive States:**
+  • Selected role: Blue background (#E3F2FD), blue text
+  • Unselected role: White background, gray text
+  • Active tab: Blue background (#1976D2), white text
+  • Inactive tab: Gray background (#ECEFF1), dark text
+  • Primary button: Blue (#1976D2), white text, 8px padding
+  • Secondary button: Gray (#ECEFF1), dark text
+  • Hover effects: Slight shadow, cursor pointer
+
+  **Accessibility:**
+  • Large touch targets (min 44x44px)
+  • High contrast ratios (WCAG AA compliant)
+  • Clear visual hierarchy
+  • Icons + text labels
+  • Focus indicators for keyboard navigation
+
+  **Performance:**
+  • QR scanner activates in <1 second
+  • Authentication process <15 seconds (NFR1.1)
+  • Form validation in real-time
+  • Loading indicators during processing
+end note
+
+@enduml
