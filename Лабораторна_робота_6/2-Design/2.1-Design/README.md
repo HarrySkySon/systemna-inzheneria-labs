@@ -620,7 +620,7 @@ Request → CORS → Authentication → Authorization → Rate Limiting → Cont
 ## Автор
 
 **Постановський Ігор**
-Група: ІСП-ХХ
+Група: ІПЗм(д)-25
 Дата: 16 грудня 2025
 Проект: SafeHeight Monitor - Система моніторингу безпеки будівельних робіт
 
