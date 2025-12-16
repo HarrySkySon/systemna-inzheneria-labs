@@ -1,0 +1,463 @@
+@startuml SafeHeight_Monitor_Class_Diagram_Controllers
+
+!define CONTROLLER_COLOR #FCE4EC
+!define DTO_COLOR #F3E5F5
+!define MIDDLEWARE_COLOR #FFF9C4
+
+title SafeHeight Monitor - API Controllers and Presentation Layer
+
+' ========================================
+' DTOs (Data Transfer Objects)
+' ========================================
+
+package "DTOs (Data Transfer Objects)" <<Rectangle>> {
+    class WorkerDTO <<DTO>> DTO_COLOR {
+        + workerId: UUID
+        + firstName: string
+        + lastName: string
+        + position: string
+        + department: string
+        + status: string
+        + deviceId: UUID
+        + emergencyContactName: string
+        + emergencyContactPhone: string
+        __
+        + fromEntity(worker: Worker): WorkerDTO
+        + toEntity(): Worker
+    }
+
+    class IoTDeviceDTO <<DTO>> DTO_COLOR {
+        + deviceId: UUID
+        + serialNumber: string
+        + deviceType: string
+        + batteryLevel: int
+        + status: string
+        + assignedWorkerId: UUID
+        + lastHeartbeat: DateTime
+        __
+        + fromEntity(device: IoTDevice): IoTDeviceDTO
+        + toEntity(): IoTDevice
+    }
+
+    class SensorReadingDTO <<DTO>> DTO_COLOR {
+        + readingId: UUID
+        + deviceId: UUID
+        + workerId: UUID
+        + timestamp: DateTime
+        + latitude: double
+        + longitude: double
+        + altitude: double
+        + bodyTilt: double
+        + heartRate: int
+        + temperature: double
+        __
+        + fromEntity(reading: SensorReading): SensorReadingDTO
+        + toEntity(): SensorReading
+    }
+
+    class RiskAssessmentDTO <<DTO>> DTO_COLOR {
+        + assessmentId: UUID
+        + workerId: UUID
+        + workerName: string
+        + timestamp: DateTime
+        + riskLevel: string
+        + riskProbability: double
+        + riskFactors: List<RiskFactorDTO>
+        + recommendations: List<string>
+        __
+        + fromEntity(assessment: RiskAssessment): RiskAssessmentDTO
+    }
+
+    class AlertDTO <<DTO>> DTO_COLOR {
+        + alertId: UUID
+        + workerId: UUID
+        + workerName: string
+        + alertType: string
+        + severity: string
+        + message: string
+        + createdAt: DateTime
+        + acknowledged: boolean
+        + acknowledgedBy: UUID
+        __
+        + fromEntity(alert: Alert): AlertDTO
+    }
+
+    class CreateWorkerRequest <<Request>> DTO_COLOR {
+        + firstName: string
+        + lastName: string
+        + position: string
+        + department: string
+        + phoneNumber: string
+        + emergencyContactName: string
+        + emergencyContactPhone: string
+        __
+        + validate(): ValidationResult
+    }
+
+    class UpdateWorkerStatusRequest <<Request>> DTO_COLOR {
+        + workerId: UUID
+        + newStatus: string
+        __
+        + validate(): ValidationResult
+    }
+
+    class AssignDeviceRequest <<Request>> DTO_COLOR {
+        + deviceId: UUID
+        + workerId: UUID
+        __
+        + validate(): ValidationResult
+    }
+
+    class AcknowledgeAlertRequest <<Request>> DTO_COLOR {
+        + alertId: UUID
+        + userId: UUID
+        + notes: string
+        __
+        + validate(): ValidationResult
+    }
+
+    class ApiResponse<T> <<Response>> DTO_COLOR {
+        + success: boolean
+        + data: T
+        + message: string
+        + errors: List<string>
+        + timestamp: DateTime
+        __
+        + static success(data: T): ApiResponse<T>
+        + static error(message: string): ApiResponse<T>
+    }
+}
+
+' ========================================
+' CONTROLLERS (API Endpoints)
+' ========================================
+
+package "API Controllers" <<Rectangle>> {
+    class WorkerController <<Controller>> CONTROLLER_COLOR {
+        - workerService: IWorkerService
+        - mapper: IMapper
+        - logger: ILogger
+        __
+        + GET /api/workers: ApiResponse<List<WorkerDTO>>
+        + GET /api/workers/{id}: ApiResponse<WorkerDTO>
+        + POST /api/workers: ApiResponse<WorkerDTO>
+        + PUT /api/workers/{id}: ApiResponse<WorkerDTO>
+        + DELETE /api/workers/{id}: ApiResponse<boolean>
+        + PUT /api/workers/{id}/status: ApiResponse<WorkerDTO>
+        + GET /api/workers/{id}/current-risk: ApiResponse<RiskAssessmentDTO>
+        __
+        - handleRequest(action: Action): ApiResponse
+        - logRequest(request: Request): void
+    }
+
+    class DeviceController <<Controller>> CONTROLLER_COLOR {
+        - deviceService: IDeviceManagementService
+        - mapper: IMapper
+        - logger: ILogger
+        __
+        + GET /api/devices: ApiResponse<List<IoTDeviceDTO>>
+        + GET /api/devices/{id}: ApiResponse<IoTDeviceDTO>
+        + POST /api/devices: ApiResponse<IoTDeviceDTO>
+        + PUT /api/devices/{id}: ApiResponse<IoTDeviceDTO>
+        + DELETE /api/devices/{id}: ApiResponse<boolean>
+        + POST /api/devices/{id}/assign: ApiResponse<IoTDeviceDTO>
+        + POST /api/devices/{id}/unassign: ApiResponse<IoTDeviceDTO>
+        + GET /api/devices/health-check: ApiResponse<List<IoTDeviceDTO>>
+        __
+        - validateDevice(device: IoTDeviceDTO): ValidationResult
+    }
+
+    class SensorDataController <<Controller>> CONTROLLER_COLOR {
+        - ingestionService: IDataIngestionService
+        - sensorRepository: ISensorReadingRepository
+        - mapper: IMapper
+        - logger: ILogger
+        __
+        + POST /api/sensor-data: ApiResponse<SensorReadingDTO>
+        + POST /api/sensor-data/batch: ApiResponse<BatchResult>
+        + GET /api/sensor-data/worker/{workerId}: ApiResponse<List<SensorReadingDTO>>
+        + GET /api/sensor-data/device/{deviceId}: ApiResponse<List<SensorReadingDTO>>
+        __
+        - validateReading(reading: SensorReadingDTO): ValidationResult
+        - enrichReading(reading: SensorReadingDTO): SensorReadingDTO
+    }
+
+    class AlertController <<Controller>> CONTROLLER_COLOR {
+        - alertService: IAlertService
+        - mapper: IMapper
+        - logger: ILogger
+        __
+        + GET /api/alerts: ApiResponse<List<AlertDTO>>
+        + GET /api/alerts/active: ApiResponse<List<AlertDTO>>
+        + GET /api/alerts/{id}: ApiResponse<AlertDTO>
+        + GET /api/alerts/worker/{workerId}: ApiResponse<List<AlertDTO>>
+        + POST /api/alerts/{id}/acknowledge: ApiResponse<AlertDTO>
+        + POST /api/alerts/{id}/escalate: ApiResponse<AlertDTO>
+        + POST /api/alerts/{id}/dismiss: ApiResponse<AlertDTO>
+        __
+        - notifyStakeholders(alert: AlertDTO): void
+    }
+
+    class RiskAssessmentController <<Controller>> CONTROLLER_COLOR {
+        - riskService: IRiskAnalysisService
+        - assessmentRepository: IRiskAssessmentRepository
+        - mapper: IMapper
+        - logger: ILogger
+        __
+        + GET /api/risk-assessments: ApiResponse<List<RiskAssessmentDTO>>
+        + GET /api/risk-assessments/{id}: ApiResponse<RiskAssessmentDTO>
+        + GET /api/risk-assessments/worker/{workerId}: ApiResponse<List<RiskAssessmentDTO>>
+        + GET /api/risk-assessments/critical: ApiResponse<List<RiskAssessmentDTO>>
+        + POST /api/risk-assessments/analyze: ApiResponse<RiskAssessmentDTO>
+        __
+        - filterByRiskLevel(assessments: List, level: RiskLevel): List
+    }
+
+    class AnalyticsController <<Controller>> CONTROLLER_COLOR {
+        - analyticsService: IAnalyticsService
+        - mapper: IMapper
+        - logger: ILogger
+        __
+        + GET /api/analytics/worker/{workerId}: ApiResponse<WorkerStats>
+        + GET /api/analytics/zone/{zoneId}: ApiResponse<ZoneStats>
+        + GET /api/analytics/system-overview: ApiResponse<SystemStats>
+        + GET /api/analytics/export: ApiResponse<Report>
+        + GET /api/analytics/dashboard: ApiResponse<DashboardData>
+        __
+        - buildDashboard(): DashboardData
+        - applyFilters(criteria: FilterCriteria): void
+    }
+
+    class ZoneController <<Controller>> CONTROLLER_COLOR {
+        - zoneService: IZoneMonitoringService
+        - zoneRepository: IZoneRepository
+        - mapper: IMapper
+        - logger: ILogger
+        __
+        + GET /api/zones: ApiResponse<List<ZoneDTO>>
+        + GET /api/zones/{id}: ApiResponse<ZoneDTO>
+        + POST /api/zones: ApiResponse<ZoneDTO>
+        + PUT /api/zones/{id}: ApiResponse<ZoneDTO>
+        + DELETE /api/zones/{id}: ApiResponse<boolean>
+        + GET /api/zones/{id}/workers: ApiResponse<List<WorkerDTO>>
+        + GET /api/zones/location: ApiResponse<List<ZoneDTO>>
+        __
+        - validateBoundaries(boundaries: Polygon): boolean
+    }
+}
+
+' ========================================
+' MIDDLEWARE & FILTERS
+' ========================================
+
+package "Middleware & Filters" <<Rectangle>> {
+    class AuthenticationMiddleware <<Middleware>> MIDDLEWARE_COLOR {
+        - authService: IAuthService
+        - tokenValidator: ITokenValidator
+        __
+        + invoke(context: HttpContext, next: NextDelegate): void
+        __
+        - extractToken(request: HttpRequest): string
+        - validateToken(token: string): ClaimsPrincipal
+        - setUserContext(user: ClaimsPrincipal): void
+    }
+
+    class AuthorizationMiddleware <<Middleware>> MIDDLEWARE_COLOR {
+        - permissionService: IPermissionService
+        __
+        + invoke(context: HttpContext, next: NextDelegate): void
+        __
+        - checkPermission(user: User, resource: string, action: string): boolean
+        - denyAccess(context: HttpContext): void
+    }
+
+    class ExceptionHandlingMiddleware <<Middleware>> MIDDLEWARE_COLOR {
+        - logger: ILogger
+        __
+        + invoke(context: HttpContext, next: NextDelegate): void
+        __
+        - handleException(ex: Exception): ApiResponse
+        - logException(ex: Exception, context: HttpContext): void
+        - getStatusCode(ex: Exception): int
+    }
+
+    class RequestLoggingMiddleware <<Middleware>> MIDDLEWARE_COLOR {
+        - logger: ILogger
+        - metricsCollector: IMetricsCollector
+        __
+        + invoke(context: HttpContext, next: NextDelegate): void
+        __
+        - logRequest(context: HttpContext): void
+        - logResponse(context: HttpContext, duration: long): void
+        - collectMetrics(context: HttpContext, duration: long): void
+    }
+
+    class RateLimitingMiddleware <<Middleware>> MIDDLEWARE_COLOR {
+        - rateLimiter: IRateLimiter
+        - cache: ICache
+        __
+        + invoke(context: HttpContext, next: NextDelegate): void
+        __
+        - checkRateLimit(clientId: string): boolean
+        - incrementCounter(clientId: string): void
+        - getRateLimitResponse(): ApiResponse
+    }
+
+    class CorsMiddleware <<Middleware>> MIDDLEWARE_COLOR {
+        - corsPolicy: CorsPolicy
+        __
+        + invoke(context: HttpContext, next: NextDelegate): void
+        __
+        - applyHeaders(response: HttpResponse): void
+        - handlePreflightRequest(context: HttpContext): void
+    }
+
+    class ValidationFilter <<Filter>> MIDDLEWARE_COLOR {
+        + onActionExecuting(context: ActionContext): void
+        + onActionExecuted(context: ActionContext): void
+        __
+        - validateModel(model: object): ValidationResult
+        - buildValidationResponse(errors: List<Error>): ApiResponse
+    }
+}
+
+' ========================================
+' SERVICE INTERFACES FOR CONTROLLERS
+' ========================================
+
+package "Controller Service Interfaces" <<Rectangle>> {
+    interface IWorkerService <<Interface>> {
+        + getAllWorkers(): List<Worker>
+        + getWorkerById(id: UUID): Worker
+        + createWorker(request: CreateWorkerRequest): Worker
+        + updateWorker(id: UUID, worker: Worker): Worker
+        + deleteWorker(id: UUID): boolean
+        + updateWorkerStatus(id: UUID, status: WorkerStatus): Worker
+        + getCurrentRisk(workerId: UUID): RiskAssessment
+    }
+
+    interface IMapper <<Interface>> {
+        + map<TSource, TDestination>(source: TSource): TDestination
+        + mapList<TSource, TDestination>(source: List<TSource>): List<TDestination>
+    }
+
+    interface ILogger <<Interface>> {
+        + logInfo(message: string): void
+        + logWarning(message: string): void
+        + logError(message: string, exception: Exception): void
+        + logDebug(message: string): void
+    }
+
+    interface IAuthService <<Interface>> {
+        + authenticate(credentials: Credentials): AuthResult
+        + validateToken(token: string): ClaimsPrincipal
+        + refreshToken(refreshToken: string): TokenResult
+    }
+
+    interface ITokenValidator <<Interface>> {
+        + validate(token: string): ValidationResult
+        + extractClaims(token: string): ClaimsPrincipal
+    }
+
+    interface IPermissionService <<Interface>> {
+        + hasPermission(user: User, resource: string, action: string): boolean
+        + getUserPermissions(userId: UUID): List<Permission>
+    }
+
+    interface IRateLimiter <<Interface>> {
+        + isAllowed(clientId: string): boolean
+        + getRemainingQuota(clientId: string): int
+    }
+
+    interface IMetricsCollector <<Interface>> {
+        + recordRequest(endpoint: string, duration: long, statusCode: int): void
+        + recordError(endpoint: string, errorType: string): void
+        + getMetrics(period: Period): Metrics
+    }
+}
+
+' ========================================
+' RELATIONSHIPS
+' ========================================
+
+' Controllers depend on Service Interfaces
+WorkerController ..> IWorkerService : depends on
+DeviceController ..> IDeviceManagementService : depends on
+SensorDataController ..> IDataIngestionService : depends on
+AlertController ..> IAlertService : depends on
+RiskAssessmentController ..> IRiskAnalysisService : depends on
+AnalyticsController ..> IAnalyticsService : depends on
+ZoneController ..> IZoneMonitoringService : depends on
+
+' Controllers use Mapper and Logger
+WorkerController ..> IMapper : depends on
+WorkerController ..> ILogger : depends on
+DeviceController ..> IMapper : depends on
+DeviceController ..> ILogger : depends on
+SensorDataController ..> IMapper : depends on
+SensorDataController ..> ILogger : depends on
+AlertController ..> IMapper : depends on
+AlertController ..> ILogger : depends on
+RiskAssessmentController ..> IMapper : depends on
+RiskAssessmentController ..> ILogger : depends on
+AnalyticsController ..> IMapper : depends on
+AnalyticsController ..> ILogger : depends on
+ZoneController ..> IMapper : depends on
+ZoneController ..> ILogger : depends on
+
+' Controllers use DTOs
+WorkerController ..> WorkerDTO : uses
+WorkerController ..> CreateWorkerRequest : uses
+DeviceController ..> IoTDeviceDTO : uses
+DeviceController ..> AssignDeviceRequest : uses
+SensorDataController ..> SensorReadingDTO : uses
+AlertController ..> AlertDTO : uses
+AlertController ..> AcknowledgeAlertRequest : uses
+RiskAssessmentController ..> RiskAssessmentDTO : uses
+
+' All controllers return ApiResponse
+WorkerController ..> ApiResponse : returns
+DeviceController ..> ApiResponse : returns
+SensorDataController ..> ApiResponse : returns
+AlertController ..> ApiResponse : returns
+RiskAssessmentController ..> ApiResponse : returns
+AnalyticsController ..> ApiResponse : returns
+ZoneController ..> ApiResponse : returns
+
+' Middleware dependencies
+AuthenticationMiddleware ..> IAuthService : depends on
+AuthenticationMiddleware ..> ITokenValidator : depends on
+AuthorizationMiddleware ..> IPermissionService : depends on
+ExceptionHandlingMiddleware ..> ILogger : depends on
+RequestLoggingMiddleware ..> ILogger : depends on
+RequestLoggingMiddleware ..> IMetricsCollector : depends on
+RateLimitingMiddleware ..> IRateLimiter : depends on
+RateLimitingMiddleware ..> ICache : depends on
+
+note top of WorkerController
+  <b>Single Responsibility Principle (SRP):</b>
+  Controller only handles HTTP concerns
+  - Request/response mapping
+  - Input validation
+  - Calling appropriate service methods
+
+  Business logic is in IWorkerService
+end note
+
+note bottom of AuthenticationMiddleware
+  <b>Open/Closed Principle (OCP):</b>
+  Middleware pipeline is extensible
+  - Add new middleware without modifying existing ones
+  - Each middleware has single responsibility
+end note
+
+note right of ApiResponse
+  <b>Generic Response Wrapper:</b>
+  Consistent API response structure
+  - Success/error indication
+  - Data payload
+  - Error messages
+  - Timestamp
+end note
+
+@enduml

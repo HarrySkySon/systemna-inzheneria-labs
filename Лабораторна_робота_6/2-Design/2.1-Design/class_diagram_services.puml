@@ -1,0 +1,356 @@
+@startuml SafeHeight_Monitor_Class_Diagram_Services
+
+!define INTERFACE_COLOR #B2DFDB
+!define SERVICE_COLOR #FFF3E0
+!define REPOSITORY_COLOR #E8F5E9
+
+title SafeHeight Monitor - Services and Repositories Layer
+
+' ========================================
+' REPOSITORY INTERFACES (Data Access)
+' ========================================
+
+package "Repository Interfaces" <<Rectangle>> {
+    interface IWorkerRepository <<Interface>> INTERFACE_COLOR {
+        + findById(id: UUID): Worker
+        + findAll(): List<Worker>
+        + findByStatus(status: WorkerStatus): List<Worker>
+        + save(worker: Worker): Worker
+        + update(worker: Worker): Worker
+        + delete(id: UUID): boolean
+        + findByDeviceId(deviceId: UUID): Worker
+    }
+
+    interface IIoTDeviceRepository <<Interface>> INTERFACE_COLOR {
+        + findById(id: UUID): IoTDevice
+        + findAll(): List<IoTDevice>
+        + findByStatus(status: DeviceStatus): List<IoTDevice>
+        + findByWorker(workerId: UUID): IoTDevice
+        + save(device: IoTDevice): IoTDevice
+        + update(device: IoTDevice): IoTDevice
+        + delete(id: UUID): boolean
+    }
+
+    interface ISensorReadingRepository <<Interface>> INTERFACE_COLOR {
+        + findById(id: UUID): SensorReading
+        + findByWorker(workerId: UUID, from: DateTime, to: DateTime): List<SensorReading>
+        + findByDevice(deviceId: UUID, limit: int): List<SensorReading>
+        + save(reading: SensorReading): SensorReading
+        + saveBatch(readings: List<SensorReading>): int
+        + deleteOlderThan(date: DateTime): int
+    }
+
+    interface IRiskAssessmentRepository <<Interface>> INTERFACE_COLOR {
+        + findById(id: UUID): RiskAssessment
+        + findByWorker(workerId: UUID, limit: int): List<RiskAssessment>
+        + findCritical(from: DateTime): List<RiskAssessment>
+        + save(assessment: RiskAssessment): RiskAssessment
+        + getStatistics(from: DateTime, to: DateTime): AssessmentStats
+    }
+
+    interface IAlertRepository <<Interface>> INTERFACE_COLOR {
+        + findById(id: UUID): Alert
+        + findActive(): List<Alert>
+        + findByWorker(workerId: UUID): List<Alert>
+        + findBySeverity(severity: AlertSeverity): List<Alert>
+        + save(alert: Alert): Alert
+        + update(alert: Alert): Alert
+        + acknowledge(alertId: UUID, userId: UUID): boolean
+    }
+
+    interface IZoneRepository <<Interface>> INTERFACE_COLOR {
+        + findById(id: UUID): Zone
+        + findAll(): List<Zone>
+        + findByLocation(location: GeoLocation): List<Zone>
+        + save(zone: Zone): Zone
+        + update(zone: Zone): Zone
+        + delete(id: UUID): boolean
+    }
+}
+
+' ========================================
+' SERVICE INTERFACES (Business Logic)
+' ========================================
+
+package "Service Interfaces" <<Rectangle>> {
+    interface IRiskAnalysisService <<Interface>> INTERFACE_COLOR {
+        + analyzeReading(reading: SensorReading): RiskAssessment
+        + analyzeBatch(readings: List<SensorReading>): List<RiskAssessment>
+        + predictRisk(workerId: UUID, horizon: Duration): RiskPrediction
+    }
+
+    interface IAlertService <<Interface>> INTERFACE_COLOR {
+        + createAlert(assessment: RiskAssessment): Alert
+        + acknowledgeAlert(alertId: UUID, userId: UUID): void
+        + escalateAlert(alertId: UUID): void
+        + dismissAlert(alertId: UUID, reason: string): void
+        + getActiveAlerts(): List<Alert>
+    }
+
+    interface INotificationService <<Interface>> INTERFACE_COLOR {
+        + sendNotification(recipient: string, message: string, channel: NotificationChannel): boolean
+        + sendBulkNotification(recipients: List<string>, message: string): int
+        + sendEmergencyNotification(alert: Alert): void
+    }
+
+    interface IDeviceManagementService <<Interface>> INTERFACE_COLOR {
+        + registerDevice(device: IoTDevice): IoTDevice
+        + assignDevice(deviceId: UUID, workerId: UUID): void
+        + unassignDevice(deviceId: UUID): void
+        + updateFirmware(deviceId: UUID, version: string): boolean
+        + checkDeviceHealth(): List<IoTDevice>
+    }
+
+    interface IZoneMonitoringService <<Interface>> INTERFACE_COLOR {
+        + checkZoneViolation(workerId: UUID, location: GeoLocation): ZoneViolation
+        + getWorkersInZone(zoneId: UUID): List<Worker>
+        + updateZoneBoundaries(zoneId: UUID, boundaries: Polygon): void
+    }
+
+    interface IDataIngestionService <<Interface>> INTERFACE_COLOR {
+        + ingestReading(reading: SensorReading): void
+        + ingestBatch(readings: List<SensorReading>): void
+        + validateReading(reading: SensorReading): ValidationResult
+    }
+
+    interface IAnalyticsService <<Interface>> INTERFACE_COLOR {
+        + getWorkerStatistics(workerId: UUID, period: Period): WorkerStats
+        + getZoneStatistics(zoneId: UUID, period: Period): ZoneStats
+        + getSystemOverview(period: Period): SystemStats
+        + exportReport(criteria: ReportCriteria): Report
+    }
+}
+
+' ========================================
+' CONCRETE SERVICE IMPLEMENTATIONS
+' ========================================
+
+package "Service Implementations" <<Rectangle>> {
+    class RiskAnalysisService <<Service>> SERVICE_COLOR {
+        - mlModelClient: IMLModelClient
+        - sensorRepository: ISensorReadingRepository
+        - assessmentRepository: IRiskAssessmentRepository
+        - config: RiskAnalysisConfig
+        __
+        + analyzeReading(reading: SensorReading): RiskAssessment
+        + analyzeBatch(readings: List<SensorReading>): List<RiskAssessment>
+        + predictRisk(workerId: UUID, horizon: Duration): RiskPrediction
+        __
+        - validateInput(reading: SensorReading): boolean
+        - calculateRiskScore(features: FeatureVector): double
+        - determineRiskLevel(score: double): RiskLevel
+    }
+
+    class AlertService <<Service>> SERVICE_COLOR {
+        - alertRepository: IAlertRepository
+        - notificationService: INotificationService
+        - workerRepository: IWorkerRepository
+        - alertConfig: AlertConfig
+        __
+        + createAlert(assessment: RiskAssessment): Alert
+        + acknowledgeAlert(alertId: UUID, userId: UUID): void
+        + escalateAlert(alertId: UUID): void
+        + dismissAlert(alertId: UUID, reason: string): void
+        + getActiveAlerts(): List<Alert>
+        __
+        - shouldCreateAlert(assessment: RiskAssessment): boolean
+        - determineRecipients(alert: Alert): List<string>
+    }
+
+    class NotificationService <<Service>> SERVICE_COLOR {
+        - emailProvider: IEmailProvider
+        - smsProvider: ISMSProvider
+        - pushProvider: IPushNotificationProvider
+        - notificationQueue: IMessageQueue
+        __
+        + sendNotification(recipient: string, message: string, channel: NotificationChannel): boolean
+        + sendBulkNotification(recipients: List<string>, message: string): int
+        + sendEmergencyNotification(alert: Alert): void
+        __
+        - formatMessage(template: string, data: Map): string
+        - selectChannel(urgency: Urgency): NotificationChannel
+    }
+
+    class DeviceManagementService <<Service>> SERVICE_COLOR {
+        - deviceRepository: IIoTDeviceRepository
+        - workerRepository: IWorkerRepository
+        - mqttClient: IMQTTClient
+        - deviceConfig: DeviceConfig
+        __
+        + registerDevice(device: IoTDevice): IoTDevice
+        + assignDevice(deviceId: UUID, workerId: UUID): void
+        + unassignDevice(deviceId: UUID): void
+        + updateFirmware(deviceId: UUID, version: string): boolean
+        + checkDeviceHealth(): List<IoTDevice>
+        __
+        - sendDeviceCommand(deviceId: UUID, command: Command): boolean
+        - validateFirmwareVersion(version: string): boolean
+    }
+
+    class ZoneMonitoringService <<Service>> SERVICE_COLOR {
+        - zoneRepository: IZoneRepository
+        - workerRepository: IWorkerRepository
+        - geoSpatialEngine: IGeoSpatialEngine
+        __
+        + checkZoneViolation(workerId: UUID, location: GeoLocation): ZoneViolation
+        + getWorkersInZone(zoneId: UUID): List<Worker>
+        + updateZoneBoundaries(zoneId: UUID, boundaries: Polygon): void
+        __
+        - isLocationInZone(location: GeoLocation, zone: Zone): boolean
+        - calculateDistance(loc1: GeoLocation, loc2: GeoLocation): double
+    }
+
+    class DataIngestionService <<Service>> SERVICE_COLOR {
+        - sensorRepository: ISensorReadingRepository
+        - validationService: IDataValidationService
+        - dataQueue: IMessageQueue
+        - cache: ICache
+        __
+        + ingestReading(reading: SensorReading): void
+        + ingestBatch(readings: List<SensorReading>): void
+        + validateReading(reading: SensorReading): ValidationResult
+        __
+        - deduplicate(reading: SensorReading): boolean
+        - enrichReading(reading: SensorReading): SensorReading
+    }
+
+    class AnalyticsService <<Service>> SERVICE_COLOR {
+        - assessmentRepository: IRiskAssessmentRepository
+        - sensorRepository: ISensorReadingRepository
+        - workerRepository: IWorkerRepository
+        - zoneRepository: IZoneRepository
+        __
+        + getWorkerStatistics(workerId: UUID, period: Period): WorkerStats
+        + getZoneStatistics(zoneId: UUID, period: Period): ZoneStats
+        + getSystemOverview(period: Period): SystemStats
+        + exportReport(criteria: ReportCriteria): Report
+        __
+        - aggregateData(data: List<T>, groupBy: string): Map
+        - calculateMetrics(data: List<T>): Metrics
+    }
+}
+
+' ========================================
+' EXTERNAL SERVICE INTERFACES (for DIP)
+' ========================================
+
+package "External Service Interfaces" <<Rectangle>> {
+    interface IMLModelClient <<Interface>> INTERFACE_COLOR {
+        + predict(features: FeatureVector): PredictionResult
+        + batchPredict(features: List<FeatureVector>): List<PredictionResult>
+        + getModelMetrics(): ModelMetrics
+    }
+
+    interface IEmailProvider <<Interface>> INTERFACE_COLOR {
+        + sendEmail(to: string, subject: string, body: string): boolean
+        + sendBulkEmail(recipients: List<string>, subject: string, body: string): int
+    }
+
+    interface ISMSProvider <<Interface>> INTERFACE_COLOR {
+        + sendSMS(phoneNumber: string, message: string): boolean
+        + sendBulkSMS(phoneNumbers: List<string>, message: string): int
+    }
+
+    interface IPushNotificationProvider <<Interface>> INTERFACE_COLOR {
+        + sendPushNotification(deviceToken: string, title: string, body: string): boolean
+        + sendToTopic(topic: string, title: string, body: string): int
+    }
+
+    interface IMQTTClient <<Interface>> INTERFACE_COLOR {
+        + publish(topic: string, message: string): void
+        + subscribe(topic: string, callback: MessageCallback): void
+        + unsubscribe(topic: string): void
+    }
+
+    interface IMessageQueue <<Interface>> INTERFACE_COLOR {
+        + enqueue(message: Message): void
+        + dequeue(): Message
+        + peek(): Message
+        + size(): int
+    }
+
+    interface ICache <<Interface>> INTERFACE_COLOR {
+        + get(key: string): T
+        + set(key: string, value: T, ttl: Duration): void
+        + delete(key: string): boolean
+        + exists(key: string): boolean
+    }
+
+    interface IGeoSpatialEngine <<Interface>> INTERFACE_COLOR {
+        + isPointInPolygon(point: GeoLocation, polygon: Polygon): boolean
+        + distance(point1: GeoLocation, point2: GeoLocation): double
+        + buffer(location: GeoLocation, radius: double): Polygon
+    }
+
+    interface IDataValidationService <<Interface>> INTERFACE_COLOR {
+        + validate(data: T): ValidationResult
+        + validateBatch(data: List<T>): List<ValidationResult>
+    }
+}
+
+' ========================================
+' RELATIONSHIPS - DEPENDENCY INJECTION
+' ========================================
+
+' Service Implementations implement Service Interfaces
+RiskAnalysisService ..|> IRiskAnalysisService
+AlertService ..|> IAlertService
+NotificationService ..|> INotificationService
+DeviceManagementService ..|> IDeviceManagementService
+ZoneMonitoringService ..|> IZoneMonitoringService
+DataIngestionService ..|> IDataIngestionService
+AnalyticsService ..|> IAnalyticsService
+
+' Services depend on Repository Interfaces (DIP)
+RiskAnalysisService ..> ISensorReadingRepository : depends on
+RiskAnalysisService ..> IRiskAssessmentRepository : depends on
+AlertService ..> IAlertRepository : depends on
+AlertService ..> IWorkerRepository : depends on
+DeviceManagementService ..> IIoTDeviceRepository : depends on
+DeviceManagementService ..> IWorkerRepository : depends on
+ZoneMonitoringService ..> IZoneRepository : depends on
+ZoneMonitoringService ..> IWorkerRepository : depends on
+DataIngestionService ..> ISensorReadingRepository : depends on
+AnalyticsService ..> IRiskAssessmentRepository : depends on
+AnalyticsService ..> ISensorReadingRepository : depends on
+AnalyticsService ..> IWorkerRepository : depends on
+AnalyticsService ..> IZoneRepository : depends on
+
+' Services depend on External Service Interfaces (DIP)
+RiskAnalysisService ..> IMLModelClient : depends on
+AlertService ..> INotificationService : depends on
+NotificationService ..> IEmailProvider : depends on
+NotificationService ..> ISMSProvider : depends on
+NotificationService ..> IPushNotificationProvider : depends on
+NotificationService ..> IMessageQueue : depends on
+DeviceManagementService ..> IMQTTClient : depends on
+DataIngestionService ..> IDataValidationService : depends on
+DataIngestionService ..> IMessageQueue : depends on
+DataIngestionService ..> ICache : depends on
+ZoneMonitoringService ..> IGeoSpatialEngine : depends on
+
+note top of RiskAnalysisService
+  <b>SOLID Principles Applied:</b>
+  - <b>SRP:</b> Only handles risk analysis
+  - <b>OCP:</b> Extensible through IMLModelClient
+  - <b>LSP:</b> Can be substituted with any IRiskAnalysisService
+  - <b>ISP:</b> Focused interface, no bloat
+  - <b>DIP:</b> Depends on abstractions (interfaces), not concrete classes
+end note
+
+note bottom of NotificationService
+  <b>Dependency Inversion Principle (DIP):</b>
+  NotificationService depends on interfaces
+  (IEmailProvider, ISMSProvider, etc.)
+  not on concrete implementations.
+  This allows easy swapping of providers.
+end note
+
+note right of IWorkerRepository
+  <b>Repository Pattern:</b>
+  Abstracts data access logic
+  Enables testing with mocks
+  Follows Interface Segregation
+end note
+
+@enduml

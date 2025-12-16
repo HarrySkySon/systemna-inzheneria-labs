@@ -1,0 +1,252 @@
+@startuml SafeHeight_Monitor_Class_Diagram_Main
+
+!define ENTITY_COLOR #E1F5FE
+!define SERVICE_COLOR #FFF3E0
+!define REPOSITORY_COLOR #E8F5E9
+!define CONTROLLER_COLOR #FCE4EC
+
+title SafeHeight Monitor - Main Class Diagram
+
+' ========================================
+' DOMAIN ENTITIES (Core Business Objects)
+' ========================================
+
+package "Domain Entities" <<Rectangle>> {
+    class Worker <<Entity>> ENTITY_COLOR {
+        - workerId: UUID
+        - firstName: string
+        - lastName: string
+        - position: string
+        - department: string
+        - phoneNumber: string
+        - emergencyContact: EmergencyContact
+        - status: WorkerStatus
+        - createdAt: DateTime
+        - updatedAt: DateTime
+        __
+        + getFullName(): string
+        + isActive(): boolean
+        + updateStatus(status: WorkerStatus): void
+        + assignDevice(device: IoTDevice): void
+    }
+
+    class IoTDevice <<Entity>> ENTITY_COLOR {
+        - deviceId: UUID
+        - serialNumber: string
+        - deviceType: DeviceType
+        - firmwareVersion: string
+        - batteryLevel: int
+        - status: DeviceStatus
+        - lastHeartbeat: DateTime
+        - assignedWorker: Worker
+        __
+        + isOperational(): boolean
+        + updateBatteryLevel(level: int): void
+        + sendHeartbeat(): void
+        + calibrate(): void
+    }
+
+    class SensorReading <<Entity>> ENTITY_COLOR {
+        - readingId: UUID
+        - deviceId: UUID
+        - workerId: UUID
+        - timestamp: DateTime
+        - location: GeoLocation
+        - altitude: double
+        - bodyTilt: double
+        - heartRate: int
+        - temperature: double
+        - accelerometerData: Vector3D
+        - gyroscopeData: Vector3D
+        __
+        + isAnomalous(): boolean
+        + validate(): ValidationResult
+    }
+
+    class RiskAssessment <<Entity>> ENTITY_COLOR {
+        - assessmentId: UUID
+        - workerId: UUID
+        - timestamp: DateTime
+        - riskLevel: RiskLevel
+        - riskProbability: double
+        - riskFactors: List<RiskFactor>
+        - recommendations: List<string>
+        - processedAt: DateTime
+        __
+        + isCritical(): boolean
+        + requiresImmedateAction(): boolean
+        + getTopRiskFactors(count: int): List<RiskFactor>
+    }
+
+    class Alert <<Entity>> ENTITY_COLOR {
+        - alertId: UUID
+        - workerId: UUID
+        - assessmentId: UUID
+        - alertType: AlertType
+        - severity: AlertSeverity
+        - message: string
+        - acknowledgedAt: DateTime
+        - acknowledgedBy: UUID
+        - createdAt: DateTime
+        __
+        + acknowledge(userId: UUID): void
+        + isAcknowledged(): boolean
+        + escalate(): void
+        + dismiss(reason: string): void
+    }
+
+    class Zone <<Entity>> ENTITY_COLOR {
+        - zoneId: UUID
+        - name: string
+        - description: string
+        - boundaries: Polygon
+        - maxAltitude: double
+        - dangerLevel: DangerLevel
+        - restrictions: List<string>
+        __
+        + contains(location: GeoLocation): boolean
+        + isRestricted(): boolean
+        + getAllowedWorkers(): List<Worker>
+    }
+
+    class EmergencyContact <<ValueObject>> ENTITY_COLOR {
+        - name: string
+        - relationship: string
+        - phoneNumber: string
+        - alternativePhone: string
+    }
+
+    class GeoLocation <<ValueObject>> ENTITY_COLOR {
+        - latitude: double
+        - longitude: double
+        - altitude: double
+        - accuracy: double
+        __
+        + distanceTo(other: GeoLocation): double
+        + isWithinRadius(center: GeoLocation, radius: double): boolean
+    }
+
+    class Vector3D <<ValueObject>> ENTITY_COLOR {
+        - x: double
+        - y: double
+        - z: double
+        __
+        + magnitude(): double
+        + normalize(): Vector3D
+    }
+
+    class RiskFactor <<ValueObject>> ENTITY_COLOR {
+        - factor: string
+        - severity: double
+        - description: string
+        - threshold: double
+        - actualValue: double
+        __
+        + exceedsThreshold(): boolean
+    }
+}
+
+' ========================================
+' ENUMERATIONS
+' ========================================
+
+package "Enumerations" <<Rectangle>> {
+    enum WorkerStatus {
+        ACTIVE
+        ON_BREAK
+        OFF_DUTY
+        IN_DANGER
+        EMERGENCY
+        INACTIVE
+    }
+
+    enum DeviceType {
+        WRIST_BRACELET
+        HELMET_SENSOR
+        HARNESS_MONITOR
+        GATEWAY
+    }
+
+    enum DeviceStatus {
+        ONLINE
+        OFFLINE
+        CHARGING
+        MAINTENANCE
+        FAULTY
+    }
+
+    enum RiskLevel {
+        LOW
+        MEDIUM
+        HIGH
+        CRITICAL
+    }
+
+    enum AlertType {
+        FALL_RISK
+        UNAUTHORIZED_ZONE
+        HEALTH_ISSUE
+        DEVICE_MALFUNCTION
+        EMERGENCY_BUTTON
+        GEOFENCE_BREACH
+    }
+
+    enum AlertSeverity {
+        INFO
+        WARNING
+        CRITICAL
+        EMERGENCY
+    }
+
+    enum DangerLevel {
+        SAFE
+        CAUTION
+        DANGEROUS
+        RESTRICTED
+    }
+}
+
+' ========================================
+' RELATIONSHIPS
+' ========================================
+
+Worker "1" -- "0..1" IoTDevice : assigned to >
+Worker "1" *-- "1" EmergencyContact : has
+Worker "1" -- "0..*" SensorReading : generates >
+Worker "1" -- "0..*" RiskAssessment : assessed for >
+Worker "1" -- "0..*" Alert : receives >
+
+IoTDevice "1" -- "0..*" SensorReading : produces >
+
+SensorReading "1" *-- "1" GeoLocation : recorded at
+SensorReading "1" *-- "2" Vector3D : contains
+
+RiskAssessment "1" -- "1" SensorReading : based on >
+RiskAssessment "1" *-- "1..*" RiskFactor : contains
+RiskAssessment "1" -- "0..*" Alert : triggers >
+
+Zone "1" -- "0..*" Worker : monitors >
+Zone "1" -- "0..*" Alert : generates >
+
+Worker -- WorkerStatus
+IoTDevice -- DeviceType
+IoTDevice -- DeviceStatus
+RiskAssessment -- RiskLevel
+Alert -- AlertType
+Alert -- AlertSeverity
+Zone -- DangerLevel
+
+note right of Worker
+  <b>Single Responsibility:</b>
+  Represents a construction worker
+  with their personal information
+  and current status
+end note
+
+note right of RiskAssessment
+  <b>Value Object Pattern:</b>
+  Immutable assessment result
+  from ML model processing
+end note
+
+@enduml
