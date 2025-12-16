@@ -1,0 +1,172 @@
+@startuml SafeHeight_Monitor_Component_Diagram
+!define RECTANGLE class
+
+skinparam componentStyle rectangle
+skinparam backgroundColor #FFFFFF
+skinparam component {
+  BackgroundColor<<presentation>> LightBlue
+  BackgroundColor<<application>> LightGreen
+  BackgroundColor<<iot>> LightYellow
+  BackgroundColor<<aiml>> LightPink
+  BackgroundColor<<data>> LightGray
+  BackgroundColor<<integration>> LightCyan
+  BorderColor Black
+  FontSize 12
+}
+
+title Діаграма компонентів архітектури системи SafeHeight Monitor
+
+' Presentation Layer
+package "Presentation Layer" <<presentation>> {
+  component [Web Client\n(React.js)] as WebClient
+  component [Mobile App\n(React Native)] as MobileApp
+  component [Admin Dashboard] as AdminDashboard
+}
+
+' Application Layer
+package "Application Layer" <<application>> {
+  component [API Gateway] as APIGateway
+  component [Authentication\nService] as AuthService
+  component [Worker Management\nService] as WorkerService
+  component [IoT Device\nService] as IoTService
+  component [Alert Service] as AlertService
+  component [Analytics Service] as AnalyticsService
+  component [Zone Management\nService] as ZoneService
+  component [Report Service] as ReportService
+}
+
+' IoT Infrastructure
+package "IoT Infrastructure" <<iot>> {
+  component [Azure IoT Hub] as IoTHub
+  component [IoT Devices\n(Wearables)] as IoTDevices
+  component [Stream Analytics] as StreamAnalytics
+  component [Device Provisioning\nService] as DeviceProvisioning
+}
+
+' AI/ML Layer
+package "AI/ML Layer" <<aiml>> {
+  component [Azure Machine\nLearning] as AzureML
+  component [Risk Detection\nModel] as RiskModel
+  component [Model Training\nPipeline] as MLPipeline
+  component [Model Serving] as ModelServing
+}
+
+' Data Layer
+package "Data Layer" <<data>> {
+  database "Azure SQL\nDatabase" as SQLDB
+  database "Azure Cosmos DB\n(NoSQL)" as CosmosDB
+  database "Azure Blob\nStorage" as BlobStorage
+  database "Time Series\nInsights" as TimeSeriesDB
+  component [Redis Cache] as RedisCache
+}
+
+' Integration Layer
+package "Integration Layer" <<integration>> {
+  component [Service Bus\n(Message Queue)] as ServiceBus
+  component [Event Hub] as EventHub
+  component [Notification Hub\n(SMS/Email/Push)] as NotificationHub
+}
+
+' External Systems
+component [Emergency Services\nAPI] as EmergencyAPI
+component [SMS Gateway] as SMSGateway
+
+' ==================== CONNECTIONS ====================
+
+' Presentation Layer connections
+WebClient --> APIGateway : HTTPS/REST
+MobileApp --> APIGateway : HTTPS/REST
+AdminDashboard --> APIGateway : HTTPS/REST
+
+' API Gateway to Services
+APIGateway --> AuthService : Authenticate
+APIGateway --> WorkerService : Worker CRUD
+APIGateway --> IoTService : Device Management
+APIGateway --> AlertService : Alert Management
+APIGateway --> AnalyticsService : Analytics
+APIGateway --> ZoneService : Zone Management
+APIGateway --> ReportService : Reports
+
+' Services to Data Layer
+AuthService --> SQLDB : User Auth Data
+WorkerService --> SQLDB : Worker Data
+IoTService --> SQLDB : Device Metadata
+ZoneService --> SQLDB : Zone Config
+AlertService --> CosmosDB : Alert Data
+AnalyticsService --> TimeSeriesDB : Historical Data
+ReportService --> SQLDB : Report Data
+ReportService --> BlobStorage : PDF Reports
+
+' Services to Cache
+WorkerService --> RedisCache : Cache Workers
+IoTService --> RedisCache : Cache Device Status
+AnalyticsService --> RedisCache : Cache Statistics
+
+' IoT Infrastructure connections
+IoTDevices --> IoTHub : MQTT/HTTPS
+IoTHub --> StreamAnalytics : Real-time Data
+StreamAnalytics --> TimeSeriesDB : Store Data
+StreamAnalytics --> EventHub : Events
+IoTService --> DeviceProvisioning : Register Devices
+DeviceProvisioning --> IoTHub : Provision
+
+' IoT to Services (via Event Hub)
+EventHub --> IoTService : Device Events
+EventHub --> AlertService : Sensor Data
+
+' AI/ML connections
+StreamAnalytics --> RiskModel : Sensor Data
+RiskModel --> ModelServing : Risk Analysis
+ModelServing --> AlertService : Risk Detection
+MLPipeline --> AzureML : Train Models
+AzureML --> BlobStorage : Model Storage
+AzureML --> RiskModel : Deploy Model
+
+' Integration Layer connections
+AlertService --> ServiceBus : Alert Messages
+ServiceBus --> NotificationHub : Notifications
+NotificationHub --> WebClient : Push Notifications
+NotificationHub --> MobileApp : Push Notifications
+NotificationHub --> SMSGateway : SMS Alerts
+
+' Emergency Protocol
+AlertService --> EmergencyAPI : Critical Alerts
+AlertService --> SMSGateway : SMS to Managers
+
+' Monitoring connections
+IoTService --> IoTHub : Monitor Devices
+AlertService --> EventHub : Alert Events
+
+note right of APIGateway
+  **API Gateway**
+  - Routing
+  - Authentication
+  - Rate Limiting
+  - Load Balancing
+end note
+
+note right of RiskModel
+  **AI Risk Detection**
+  - Analyzes sensor data
+  - Predicts fall risk
+  - 95% accuracy
+  - <1s latency
+end note
+
+note bottom of IoTHub
+  **IoT Hub**
+  - Device connectivity
+  - Bidirectional communication
+  - Device twins
+  - 200+ concurrent devices
+end note
+
+note bottom of AlertService
+  **Alert Service**
+  - Generates warnings
+  - Routes notifications
+  - Triggers emergency protocol
+  - Critical: <2s latency
+end note
+
+@enduml
