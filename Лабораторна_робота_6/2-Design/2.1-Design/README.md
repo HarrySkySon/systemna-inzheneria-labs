@@ -24,6 +24,7 @@
 | `class_diagram_services.puml` | Сервісний шар та repositories | ✅ PlantUML |
 | `class_diagram_services.png` | Візуалізація сервісів | ✅ Згенеровано |
 | `class_diagram_controllers.puml` | API контролери та middleware | ✅ PlantUML |
+| `class_diagram_controllers.png` | Візуалізація API шару | ✅ Згенеровано |
 | `SOLID_PRINCIPLES.md` | Доведення SOLID принципів | ✅ Документація |
 
 ---
@@ -34,6 +35,10 @@
 
 ### Призначення
 Описує базові доменні сутності (Entity Objects) та їх зв'язки - це ядро бізнес-логіки системи.
+
+### UML Діаграма
+
+![Domain Entities Class Diagram](class_diagram_main.png)
 
 ### Основні компоненти:
 
@@ -206,6 +211,10 @@ Zone "1" -- "0..*" Alert : generates
 ### Призначення
 Описує сервісний шар (Business Logic) та абстракції доступу до даних (Repositories).
 
+### UML Діаграма
+
+![Services and Repositories Class Diagram](class_diagram_services.png)
+
 ### Основні компоненти:
 
 #### **1. Repository Interfaces**
@@ -344,10 +353,14 @@ Services ✗ Concrete External Services (НЕ напряму!)
 
 ## Діаграма 3: Controllers та API Layer
 
-**Файл:** `class_diagram_controllers.puml`
+**Файл:** `class_diagram_controllers.puml` / `class_diagram_controllers.png`
 
 ### Призначення
 Описує презентаційний шар (API Controllers, DTOs, Middleware).
+
+### UML Діаграма
+
+![Controllers and API Layer Class Diagram](class_diagram_controllers.png)
 
 ### Основні компоненти:
 
